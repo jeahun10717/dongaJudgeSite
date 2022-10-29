@@ -1,0 +1,48 @@
+{
+  "name": "gusang",
+  "version": "1.0.0",
+  "description": "gusangD&C webPage",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "@koa/multer": "^3.0.0",
+    "aws-sdk": "^2.848.0",
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0",
+    "joi": "^17.6.4",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-helmet": "^6.1.0",
+    "koa-morgan": "^1.0.1",
+    "koa-router": "^10.0.0",
+    "koa-static": "^5.0.0",
+    "koa2-swagger-ui": "^5.0.5",
+    "multer": "^1.4.4",
+    "multer-s3": "^2.9.0",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.15",
+    "python-shell": "^3.0.1",
+    "random-string": "^0.2.0",
+    "serve": "^11.3.2",
+    "swagger-jsdoc": "^6.0.1",
+    "swagger-ui-koa": "0.0.1",
+    "uuid4": "^2.0.2",
+    "xss": "^1.0.8",
+    "yamljs": "^0.3.0",
+    "yarn": "^1.22.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeahun10717/onLineJudgeSite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jeahun10717/onLineJudgeSite/issues"
+  },
+  "homepage": "https://github.com/jeahun10717/onLineJudgeSite#readme"
+}

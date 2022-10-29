@@ -1,0 +1,451 @@
+openapi: 3.0.0
+info:
+  title: REST API DOC
+  description: |
+    REST API 문서
+  version: 1.0.0
+servers:
+  - url: 'http://192.168.0.86:4000/api'
+
+paths:
+# === User ======================================================================
+  /users/userMe:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 로그인된 유저 자신의 정보
+      description: 로그인도니 유저 자신의 정보를 가져온다.</br>
+                  토큰이 유효하지 않으면 오류를 뱉는다.
+      responses:
+        '200':
+          description: BearerAuth Token 으로 검증해서 있는 사람이면 그 사람 정보 출력
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  result:
+                    uuid: 49C3FA765CCF89EFB632FE376142194A,
+                    login_type: 2,
+                    login_id: kakao:2064419967,
+                    auth: 1,
+                    pw: null,
+                    phone: 01033810954,
+                    name: 성제훈,
+                    email: jeahun10717@gmail.com,
+                    regist_at: 2022-01-05T16:27:46.000Z,
+                    student_ID: 1705645
+        '401':
+          $ref: '#/components/responses/401'
+  /users/token:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 로그인 확인하는 API
+      description: 만료기간 reset 되며 새로운 토큰이 발행됨.
+      responses:
+        '200':
+          description: BearerAuth Token 으로 검증해서 있는 사람이면 그 사람 정보 출력
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  result:
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiNDlDM0ZBNzY1Q0NGODlFRkI2MzJGRTM3NjE0MjE5NEEiLCJpYXQiOjE2NDYwMzA5NTksImV4cCI6MTY0NjYzNTc1OX0.-icHKfP1bj9qDruNL-vESs27traqR2jmeOmKQRxZESg
+        '401':
+          $ref: '#/components/responses/401'
+  /users/exist:
+    post:
+      tags:
+        - User
+      summary: 유저가 존재하는지 확인(로그인 시 무조건 실행해야 함)
+      description: 유저가 존재하면 isExist 가 true, 존재하지 않으면 false</br>
+                  isExist->true 면 access_token 을 뱉어주는데 이 access_token 은 BearerAuth 에서 사용될 토큰임</br>
+                  isExist->false 면 access_token 을 주지 않고 users/add 라우트를 실행해야 함
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                login_type:
+                  type: integer
+                  enum:
+                    - 1
+                    - 2
+                  description: 1 -> naver</br>2 -> kakao
+                access_token:
+                  type: string
+                  description: 로그인 버튼 누르고 나오는 url 에서 받아오는 access_token 임
+      responses:
+        '200':
+          description: response 가 200 && 이미 유저가 존재할 떄 </br> 또한 access_token 은 bearerAuth 에 넣을 토큰임
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  data:
+                    Auth: 1
+                    isExist: true
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        '400':
+          $ref: '#/components/responses/400'
+
+
+  /users:
+    post:
+      tags:
+        - User
+      summary: exist api 요청 이후 수행하는 등록 api
+      description: /users/exist 에서 isExist 가 false 면 실행되는 api 이다.</br>
+                  여기서 나머지 필드를 다 채우고 정확한 값을 요청하면 status 200 과</br>
+                  BearerAuth 에서 사용된 accescc_token 을 함께 띄워준다.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                login_type:
+                  type: integer
+                  enum:
+                    - 1
+                    - 2
+                  default: 2
+                  description: 1 -> naver</br>2 -> kakao
+                access_token:
+                  type: string
+                  description: /users/isExist 의 body 에서 받아온 token
+                phone:
+                  type: string
+                  description: 회원의 전화번호
+                name:
+                  type: string
+                  description: 회원의 이름
+                email:
+                  type: string
+                  description: 회원의 이메일
+                student_ID:
+                  type: string
+                  description: 회원의 학번
+              required:
+                - login_type
+                - access_token
+                - phone
+                - name
+                - email
+                - student_ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  data:
+                    userToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 유저 목록
+      parameters:
+        - in: query
+          name: auth
+          schema:
+            type: string
+            enum:
+              - noFilter
+              - admin
+              - common
+          description: noFilter (default)
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: 0부터 시작
+          required: true
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum: ['desc', 'asc']
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  result:
+                    login_type: 2  
+                    access_token:   
+                    phone:  
+                    name:   
+                    email:  
+                    student_ID:   
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 유저 수정
+      description: >
+        user create 부분에서 추가 입력한 부분만 update 하는 api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  description: 추가입력 때 받은 폰번호
+                name:
+                  type: string
+                  description: 추가입력 떄 받은 이름
+                email:
+                  type: string
+                  description: 추가입력 때 받은 이메일
+                student_ID:
+                  type: string
+                  description: 추가입력 때 받은 학번
+              required:
+                - phone
+                - name
+                - email
+                - student_ID
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 회원 탈퇴(유저 본인)
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 400
+                  code: 0
+                  msg: 아이디가 없음
+
+  /users/admin:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 필터를 통한 유저검색
+      description: 필터 -> 유저이름, 유저이메일, 유저의 학번
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: 검색어
+          required: true
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+            default: desc
+          description: 오름차순 내림차순-> desc asc
+          required: true
+        - in: query
+          name: filter
+          schema:
+            type: string
+            enum:
+              - name
+              - email
+              - student_ID
+          description: 유저이름, 유저이메일, 유저의 학번
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: 페이지번호
+          required: true
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 마스터 관리자의 다른 유저 정보 변경
+      description: 마스터 관리자는 다른 유저의 정보를 모두 변경 가능</br>
+                  접속한 마스터 관리자가 자신의 정보를 변경할 수 도 있음</br>
+                  만약 마스터관리자가 자신의 권한을 낮추고 싶을 경우 아래의 플로우를 따름</br>
+                  전체 유저중 마스터 관리자가 2명 이상일 때 -> 자신의 권한 낮추는 거 가능</br>
+                  전체 유저중 마스터 관리자가 2명 미만일 때 -> 자신의 권한 낮추는 거 불가
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                  description: 유저 식별을 위한 uuid
+                auth:
+                  type: string
+                  description: 유저의 권한
+                phone:
+                  type: string
+                  description: 유저의 전화번호
+                name:
+                  type: string
+                  description: 유저의 이름
+                email:
+                  type: string
+                  description: 유저의 이메일
+                student_ID:
+                  type: string
+                  description: 유저의 학번 
+              required:
+                - uuid
+                - auth
+                - phone
+                - name
+                - email
+                - student_ID
+
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 관리자가 다른 유저 탈퇴시키는 api
+      description: 관리자가 다른 유저 탈퇴시키는 api</br>
+      parameters:
+        - in: query
+          name: uuid
+          schema:
+            type: string
+          description: 입력 받는 uuid
+          required: true
+
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+
+
+
+# === components =========================================================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    '200':
+      description: ok
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+            example:
+              status: 200
+    '400':
+      description: bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              msg:
+                type: string
+            example:
+              status: 400
+              msg: bad request
+    '401':
+      description: invalid token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              msg:
+                type: string
+            example:
+              status: 401
+              msg: 인증 오류
+
+    '403':
+      description: 권한 없음
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              msg:
+                type: string
+            example:
+              status: 403
+              msg: 권한 없음
+
+    '500':
+      description: 서버 에러
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              msg:
+                type: string
+            example:
+              status: 500
+              msg: 서버 에러

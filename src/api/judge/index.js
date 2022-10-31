@@ -11,11 +11,12 @@ const path = require('path');
 
 const {PythonShell} = require('python-shell');
 
-judge.use(auth.login);
-judge.use(auth.level1);
+// judge.use(auth.login);
+// judge.use(auth.level1);
 
-// jud
+judge.post('/', judgeCtrl.judge);
 
 // judge.post('/', cppUpload.single('test'),judgeCtrl.judge);
 
 module.exports = judge;
+

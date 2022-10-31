@@ -25,4 +25,5 @@ create table problem(
 );
 
 select * from problem;
-delete from problem where prob_num = 1;
+delete from problem where prob_num = 3;
+drop table problem;

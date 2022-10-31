@@ -5,7 +5,7 @@ info:
     REST API 문서
   version: 1.0.0
 servers:
-  - url: 'http://192.168.0.86:4000/api'
+  - url: 'http://168.115.96.213:4000/api'
 
 paths:
 # === User ======================================================================
@@ -368,6 +368,54 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200'
+
+# === Problem ======================================================================
+  /problem:
+    post:
+      tags:
+        - Problem
+      summary: 문제를 생성하는 api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                prob_name:
+                  type: string
+                  description: 문제 이름
+                time_limit:
+                  type: number
+                  description: 문제 시간
+                pdf:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 문제의 텍스트
+                inp:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 문제의 input 파일들
+                out:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 문제의 output 파일들
+              required:
+                - prob_name
+                - time_limit
+                - pdf
+                - inp
+                - out
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'        
+      
 
 
 

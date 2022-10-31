@@ -13,6 +13,7 @@
     "@koa/multer": "^3.0.0",
     "aws-sdk": "^2.848.0",
     "axios": "^0.21.1",
+    "compile-run": "^2.3.4",
     "dotenv": "^8.2.0",
     "joi": "^17.6.4",
     "jsonwebtoken": "^8.5.1",

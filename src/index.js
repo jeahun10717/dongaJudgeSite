@@ -70,10 +70,10 @@ router.get('/add', ctx=>{
         <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
     </head>
     <body>
-        <input type="text" id='company'> 부동산 중개소 이름
-        <input type="text" id='adress'> 부동산 중개소 주소
-        <input type="text" id='name'> 부동산 중개소 소장 이름
-        <input type="text" id='phone'> 부동산 중개소 소장 전화번호
+        <input type="text" id='company'> 
+        <input type="text" id='adress'> 
+        <input type="text" id='name'> 
+        <input type="text" id='phone'> 
         <input type="button" onclick="addDataSend()"> 추가정보 전송
 
         <script>
@@ -132,7 +132,7 @@ app.use(serve(__dirname + '/build'))
 app.use(serve('./public'))
 app.use(serve('./multerFIleTest'))
 app.use(bodyParser({
-    jsonLimit: '50mb', extended: true}))
+    jsonLimit: '1000mb', extended: true}))
 // app.use(form_data.array());
 // app.use(form_data.fields());
 

@@ -8,7 +8,13 @@ const path = require('path');
 
 
 
+
+
 problem.get('/', problemCtrl.showProblem);
 problem.post('/', problemCtrl.createProblem);
+problem.post('/pdf', problemCtrl.upPdf);
+problem.post('/inp', problemCtrl.upInp);
+problem.post('/out', problemCtrl.upOut);
+problem.get('/maxProbNum', problemCtrl.showMaxProbNum);
 
 module.exports = problem;

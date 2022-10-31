@@ -10,8 +10,12 @@ exports.update = async (id, query)=>{
     return await db.query("UPDATE users set ? where uuid = ?",[query, id]);
 }
 
+exports.showMaxProbNum = async () => {
+    return await db.query("SELECT MAX(prob_num) AS MAX_NUM from problem")
+}
+
 exports.showAll = async () => {
-    return await db.query("SELECT * FROM tasks");
+    return await db.query("SELECT * FROM problem");
 }
 
 exports.showSome = async () => {

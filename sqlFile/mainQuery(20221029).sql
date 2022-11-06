@@ -1,5 +1,6 @@
 create table user(
     uuid binary(16) unique primary key,
+    id varchar(30),
     name varchar(30),
     email varchar(255),
     phone varchar(25),

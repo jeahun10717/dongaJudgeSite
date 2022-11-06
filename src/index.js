@@ -121,6 +121,7 @@ router.get('/oauth',async (ctx)=>{
    ctx.body = kakaoData;
 });
 
+app.use(cors());
 app.use(// koa helmet 적용- 보안관련
   helmet({
     contentSecurityPolicy: false,

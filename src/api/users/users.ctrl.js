@@ -10,6 +10,12 @@ const { KAKAO_ADMIN_KEY } = process.env;
 // TODO: 퍼블리싱 하기 전에 밑에 부분 30 으로 고쳐야 함
 const contentNum = 15;
 
+exports.login = async (ctx) => {
+  const bodyData = Joi.object({
+      pw: Joi.string().required(),
+  })
+}
+
 exports.isExist = async (ctx) => {
     const params = Joi.object({
         login_type: Joi.number().integer().min(1).max(2).required(),

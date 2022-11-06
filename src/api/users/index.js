@@ -17,7 +17,8 @@ users.use('/naver', require('./naver').routes())
 
 users
 .post('/exist', usersCtrl.isExist)
-.post('/', usersCtrl.regist);
+.post('/', usersCtrl.regist)
+.post('/login', usersCtrl.login)
 
 // users
 // .get('/getAllAdm', usersCtrl.getAllAdm);

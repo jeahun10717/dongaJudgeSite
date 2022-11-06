@@ -15,7 +15,7 @@ exports.judge = async (ctx, next)=>{
     const bodyVal = Joi.object({
         prob_num: Joi.number().required(),
         code: Joi.string().required(),
-        codeLang: Joi.string().required()
+        prog_lang: Joi.string().required()
     }).validate(ctx.request.body);
     
     if(bodyVal.error) { // 에러 핸들링

@@ -5,7 +5,7 @@ info:
     REST API 문서
   version: 1.0.0
 servers:
-  - url: 'http://168.115.96.213:4000/api'
+  - url: 'http://192.168.0.86:4000/api'
 
 paths:
 # === User ======================================================================
@@ -75,12 +75,6 @@ paths:
             schema:
               type: object
               properties:
-                login_type:
-                  type: integer
-                  enum:
-                    - 1
-                    - 2
-                  description: 1 -> naver</br>2 -> kakao
                 access_token:
                   type: string
                   description: 로그인 버튼 누르고 나오는 url 에서 받아오는 access_token 임
@@ -115,13 +109,6 @@ paths:
             schema:
               type: object
               properties:
-                login_type:
-                  type: integer
-                  enum:
-                    - 1
-                    - 2
-                  default: 2
-                  description: 1 -> naver</br>2 -> kakao
                 access_token:
                   type: string
                   description: /users/isExist 의 body 에서 받아온 token
@@ -134,16 +121,15 @@ paths:
                 email:
                   type: string
                   description: 회원의 이메일
-                student_ID:
+                nick_name:
                   type: string
-                  description: 회원의 학번
+                  description: 회원의 닉네임
               required:
-                - login_type
                 - access_token
                 - phone
                 - name
                 - email
-                - student_ID
+                - nick_name
       responses:
         '200':
           description: OK

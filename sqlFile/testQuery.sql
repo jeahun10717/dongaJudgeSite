@@ -3,6 +3,7 @@ create database testDB;
 use testDB;
 show databases;
 use studySite;
+show tables;
 
 -- create table user(
 --     uuid binary unique primary key,
@@ -19,3 +20,5 @@ use studySite;
 --     prob_num int,
 --     problem varchar(256)
 -- );
+
+select * from user;

@@ -14,11 +14,12 @@ const { oauth,token,auth,login } = require('../../lib');
 
 users.use('/kakao', kakao.routes());
 users.use('/naver', require('./naver').routes())
+users.post('/test', usersCtrl.test);
 
 users
 .post('/exist', usersCtrl.isExist)
 .post('/', usersCtrl.regist)
-.post('/login', usersCtrl.login)
+// .post('/login', usersCtrl.login)
 
 // users
 // .get('/getAllAdm', usersCtrl.getAllAdm);

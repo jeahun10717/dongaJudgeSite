@@ -36,3 +36,7 @@ drop table problem;
 delete from user where id = 1;
 
 select * from mysql.slow_log;
+
+drop database studySite;
+
+create database studySite;

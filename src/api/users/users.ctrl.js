@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const uuid = require("../../lib/uuid");
 const { user } = require('../../databases');
 // const { token } = require('../../lib');
 const axios = require('axios')
@@ -10,33 +11,21 @@ const { KAKAO_ADMIN_KEY } = process.env;
 // TODO: 퍼블리싱 하기 전에 밑에 부분 30 으로 고쳐야 함
 const contentNum = 15;
 
-exports.login = async (ctx) => {
-  const bodyData = Joi.object({
-      pw: Joi.string().required(),
-  })
-}
-
 exports.isExist = async (ctx) => {
     const params = Joi.object({
-        login_type: Joi.number().integer().min(1).max(2).required(),
         access_token: Joi.string().required()
     }).validate(ctx.request.body);
     if (params.error) ctx.throw(400, '잘못된 요청');
 
     const {
-        login_type,
         access_token
     } = params.value;
-    let login_id;
+    let kakao_id;
     // kakao
-    if (login_type === 2) {
-        const kakaoData = await oauth.kakaoData(access_token);
-        login_id = `kakao:${kakaoData.id}`;
-    } else if (login_type === 1) {
-        const naverData = await oauth.naverData(access_token);
-        login_id = `naver:${naverData.id}`;
-    }
-    const isExist = await user.isExist(login_type, login_id);
+
+    const kakaoData = await oauth.kakaoData(access_token);
+    kakao_id = `kakao:${kakaoData.id}`;
+    const isExist = await user.isExist(kakao_id);
 
     // const bufUUID = Buffer.from(isExist.uuid, 'hex');
     // const result = await User.isExistFromUUID(bufUUID);
@@ -71,14 +60,19 @@ exports.isExist = async (ctx) => {
     }
 }
 
+exports.test = async(ctx, next) => {
+  const UUID = uuid.get();
+  const result = await user.isExistFromUUID(UUID);
+  console.log(result, UUID);
+}
+
 exports.regist = async(ctx, next) => {
     const params = Joi.object({
-        login_type: Joi.number().integer().min(1).max(2).required(),
         access_token: Joi.string().required(),
-        phone: Joi.string().regex(/^[0-9]{8,13}$/).required(), // 회원전화번호
         name: Joi.string().max(30).required(), // 회원 이름
         email: Joi.string().email().required(),
-        student_ID: Joi.string().required(),
+        phone: Joi.string().regex(/^[0-9]{8,13}$/).required(), // 회원전화번호
+        nick_name: Joi.string().required(),
         regist_at: Joi.string().isoDate().default(new Date())
       }).validate(ctx.request.body);
     
@@ -93,52 +87,34 @@ exports.regist = async(ctx, next) => {
         const throwErrMsg = regexp.exec(errorMsg);
         ctx.throw(400, throwErrMsg[0])
       };
+      
+      const {access_token, name, email, phone, nick_name, regist_at} = params.value;
+  
+      const kakaoData = await oauth.kakaoData(access_token);
+      const result = await user.isExistFromUserID(`kakao:${kakaoData.id}`)
+      if (result) ctx.throw(400, "이미 존재하는 유저입니다.")
+      // console.log(result);
+      let kakao_id = `kakao:${kakaoData.id}`;
     
-      const {
-        access_token,
-        login_type,
-        ...rest
-      } = params.value;
-    
-      let login_id;
-    
-      if (login_type === 2) { // kakao login
-        const kakaoData = await oauth.kakaoData(access_token);
-        const result = await user.isExistFromUserID(`kakao:${kakaoData.id}`)
-        if (result) ctx.throw(400, "이미 존재하는 유저입니다.")
-        // console.log(result);
-        login_id = `kakao:${kakaoData.id}`;
-      } else if (login_type === 1) { // naver login
-        const naverData = await oauth.naverData(access_token);
-        // console.log(naverData);
-        const result = await user.isExistFromUserID(`naver:${naverData.id}`)
-        if (result) ctx.throw(400, "이미 존재하는 유저입니다.")
-        login_id = `naver:${naverData.id}`;
+      let UUID = uuid.get(); // random uuid 생성
+      const uuidExist = await user.isExistFromUUID(UUID); // 랜덤으로 생성된 uuid 가 이미 db 에 존재하는지 확인
+      if(uuidExist){ // db 에 이미 uuid 가 존재할 때
+        UUID = uuid.get();
       }
-    
-      // try{ // TODO: 이 부분에 왜 try-catch 로 했는지 확인하고 나중에 수정하기
-      const userToken = await login.regist({
-        login_type,
-        login_id,
-        ...rest
+      const insertResult = await user.insert({
+        uuid: Buffer.from(UUID, 'hex'),
+        kakao_id,
+        name, 
+        email, 
+        phone, 
+        nick_name, 
+        auth:1,
       })
-      //   });
-      // }catch(e){
-      //   throw(400,e);
-      // }
-      // console.log(params);
-      // console.log(params.value);
-      // console.log(ctx.request.user);
-      // console.log(UUID);
-    
-      // query=ctx.request.body
-      // user.update(Buffer.from(UUID, 'hex'), query);
-      // kakao:1659856827
-      ctx.status = 200;
+     
       ctx.body = {
         status: 200,
         result: {
-          userToken: userToken.token
+          userToken: token.get({UUID})
         }
       };
 }

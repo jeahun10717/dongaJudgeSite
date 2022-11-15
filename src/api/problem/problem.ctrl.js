@@ -6,17 +6,25 @@ const fs = require('fs').promises;
 const { problem, user } = require('../../databases');
 
 exports.showProblem = async(ctx)=>{
-    const { UUID } = ctx.request.user;
-    const bufUUID = Buffer.from(UUID, 'hex');
+    const query = Joi.object({
+        orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
+        pageCnt: Joi.int().required(),
+        contentsCnt: Joi.int().required(),
+    }).validate(ctx.query);
 
-    const result = await user.isExistFromUUID(bufUUID);
-    // result.uuid = UUID;
-    // console.log(result.auth);
-    const userAuthLevel = result.auth; // 1은 일반유저, 2는 관리자 유저
-    if(userAuthLevel == 1) { // 일반 유저일 때의 response
+    if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
-    }else if(userAuthLevel == 2){ // 관리자 유저일 떄의 response
-        
+    const { orderForm, pageCnt, contentsCnt } = query.value;
+
+    const nPage = await problem.pagenatedProb(orderForm, pageCnt, contentsCnt);
+    const totalContentCnt = await problem.totalContentsCnt();
+
+
+    //TODO: pagination 을 위한 정보 어떤 거 필요한지 알아야 함
+    ctx.body = {
+        status: 200,
+        result: nPage,
+        totalCnt: totalContentCnt
     }
 
 }

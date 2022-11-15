@@ -18,6 +18,19 @@ exports.showAll = async () => {
     return await db.query("SELECT * FROM problem");
 }
 
-exports.showSome = async () => {
-    return await db.query("")
+exports.pagenatedProb = async (orderForm, pageNum, contentsNum) =>{
+    return await db.query(
+        `
+        select prob_num, prob_name, time_limit 
+        from problem
+        order by prob_num ${orderForm}
+        limit ? offset ?
+        `
+        ,[contentsNum, pageNum * contentsNum]
+    )
+}
+
+exports.contentsCnt = async()=>{
+    const [result] = await db.query(`select count(*) cnt from problem`);
+    return result.cnt;
 }

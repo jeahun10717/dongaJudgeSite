@@ -6,14 +6,14 @@ exports.insert = async (query)=>{
 
 exports.show = async (auth, order, page, contents)=>{
   if(auth == 'noFilter'){ // 전체
-    return await db.query(`select hex(uuid) user_id, id, Auth, phone, name, student_ID, registAt from user
+    return await db.query(`select hex(uuid) kakao_id, name, email, phone, nick_name, regist_at, auth from user
     order by id ${order} limit ? offset ?`, [contents, page * contents])
   }else{
     if(auth === 'admin'){ // 관리자
-      return await db.query(`select hex(uuid) user_id, id, Auth, phone, name, student_ID registAt from user where auth > 1
+      return await db.query(`select hex(uuid) kakao_id, name, email, phone, nick_name, regist_at, auth from user where auth > 1
       order by id ${order} limit ? offset ?`, [contents, page * contents])
     }else if(auth == 'common'){ // 일반유저(부동산)
-      return await db.query(`select hex(uuid) user_id, id, Auth, phone, name, student_ID registAt from user where auth < 2
+      return await db.query(`select hex(uuid) kakao_id, name, email, phone, nick_name, regist_at, auth from user where auth < 2
       order by id ${order} limit ? offset ?`, [contents, page * contents])
     }
   }
@@ -33,7 +33,7 @@ exports.pagenum = async (auth)=>{
 
 exports.search = async(name1, name2, order, filter, page, contents) =>{
   return await db.query(`select
-  hex(uuid) user_id, id, Auth, phone, name, student_ID, registAt
+  hex(uuid) kakao_id, name, email, phone, nick_name, regist_at, auth
   from user
   where ${filter} like ? || ${filter} like ?
   order by id ${order} limit ? offset ?`

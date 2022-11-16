@@ -30,7 +30,7 @@ exports.pagenatedProb = async (orderForm, pageNum, contentsNum) =>{
     )
 }
 
-exports.contentsCnt = async()=>{
+exports.totalContentsCnt = async()=>{
     const [result] = await db.query(`select count(*) cnt from problem`);
     return result.cnt;
 }

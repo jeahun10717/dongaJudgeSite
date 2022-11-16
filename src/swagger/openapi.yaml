@@ -357,6 +357,50 @@ paths:
 
 # === Problem ======================================================================
   /problem:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Problem
+      summary: 문제들 보여주는 api
+      description: orderForm, pageCnt, contentsCnt
+      parameters:
+        - in: query
+          name: pageCnt
+          schema:
+            type: int
+          description: 
+          required: true
+        - in: query
+          name: orderForm
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+              - DESC
+              - ASC
+            default: asc
+          description: 오름차순 내림차순-> asc desc 
+          required: true
+        - in: query
+          name: contentsCnt
+          schema:
+            type: integer
+          description: 유저이름, 유저이메일, 유저의 학번
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: 페이지번호
+          required: true
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+  
+  /problem:
     post:
       tags:
         - Problem

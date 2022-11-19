@@ -368,8 +368,8 @@ paths:
         - in: query
           name: pageCnt
           schema:
-            type: int
-          description: 
+            type: integer
+            description: "페이지 개수"
           required: true
         - in: query
           name: orderForm
@@ -400,7 +400,7 @@ paths:
         '200':
             $ref: '#/components/responses/200'
   
-  /problem:
+  /problem/pdf:
     post:
       tags:
         - Problem
@@ -411,40 +411,17 @@ paths:
             schema:
               type: object
               properties:
-                prob_name:
-                  type: string
-                  description: 문제 이름
-                time_limit:
-                  type: number
-                  description: 문제 시간
                 pdf:
                   type: array
                   items:
                     type: string
                     format: binary
-                  description: 문제의 텍스트
-                inp:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: 문제의 input 파일들
-                out:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: 문제의 output 파일들
+                    description: pdf 파일 업로드 공간
               required:
-                - prob_name
-                - time_limit
                 - pdf
-                - inp
-                - out
-
       responses:
         '200':
-            $ref: '#/components/responses/200'        
+          $ref: '#/components/responses/200'        
       
 
 

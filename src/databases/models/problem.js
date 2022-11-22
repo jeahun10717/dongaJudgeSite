@@ -21,7 +21,7 @@ exports.showAll = async () => {
 exports.pagenatedProb = async (orderForm, pageNum, contentsNum) =>{
     return await db.query(
         `
-        select prob_num, prob_name, time_limit 
+        select *
         from problem
         order by prob_num ${orderForm}
         limit ? offset ?
@@ -33,4 +33,8 @@ exports.pagenatedProb = async (orderForm, pageNum, contentsNum) =>{
 exports.totalContentsCnt = async()=>{
     const [result] = await db.query(`select count(*) cnt from problem`);
     return result.cnt;
+}
+
+exports.deleteProblem = async(probNum) => {
+    return await db.query('delete from problem where prob_num = ?', probNum);
 }

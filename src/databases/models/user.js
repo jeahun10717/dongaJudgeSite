@@ -103,3 +103,4 @@ exports.chkMstAdmExist = async() => {
 exports.getAllAdm = async()=>{
   return await db.query(`select name from user where Auth > 1`)
 }
+

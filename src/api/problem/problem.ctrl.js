@@ -8,15 +8,15 @@ const { problem, user } = require('../../databases');
 exports.showProblem = async(ctx)=>{
     const query = Joi.object({
         orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
-        pageCnt: Joi.int().required(),
-        contentsCnt: Joi.int().required(),
+        pageNum: Joi.number().required(),
+        contentsCnt: Joi.number().required(),
     }).validate(ctx.query);
-
+    console.log(query.error);
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
-    const { orderForm, pageCnt, contentsCnt } = query.value;
+    const { orderForm, pageNum, contentsCnt } = query.value;
 
-    const nPage = await problem.pagenatedProb(orderForm, pageCnt, contentsCnt);
+    const nPage = await problem.pagenatedProb(orderForm, pageNum, contentsCnt);
     const totalContentCnt = await problem.totalContentsCnt();
 
 
@@ -149,3 +149,13 @@ async function saveFile(ctx, next, probNum, type) {
     // ]);
 }
 
+exports.delProb = async(ctx, next)=>{
+    params = Joi.object({
+        probNum: Joi.number().required()
+    }).validate(ctx.params);
+
+    if(params.error) ctx.throw(400, "잘못된 요청입니다.");
+
+    fs.unlinkSync
+
+}

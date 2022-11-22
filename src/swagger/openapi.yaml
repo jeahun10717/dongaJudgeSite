@@ -160,7 +160,8 @@ paths:
               - noFilter
               - admin
               - common
-          description: noFilter (default)
+          description: 
+            noFilter (default) -> 필터없이 모든 유저 다 보여줘야 할 때</br>admin -> 관리자 유저 전부 보여줘야 할 때</br>client -> 일반 유저 전부 보여줘야 할 때
         - in: query
           name: page
           schema:
@@ -366,10 +367,10 @@ paths:
       description: orderForm, pageCnt, contentsCnt
       parameters:
         - in: query
-          name: pageCnt
+          name: pageNum
           schema:
             type: integer
-            description: "페이지 개수"
+          description: 페이지 번호
           required: true
         - in: query
           name: orderForm
@@ -387,24 +388,45 @@ paths:
           name: contentsCnt
           schema:
             type: integer
-          description: 유저이름, 유저이메일, 유저의 학번
-          required: true
-        - in: query
-          name: page
-          schema:
-            type: integer
-          description: 페이지번호
+          description: 한페이지당 보여지는 문제 개수
           required: true
 
       responses:
         '200':
             $ref: '#/components/responses/200'
   
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - Problem
+      summary: 문제 생성하는 api
+      description: 문제 생성하는 api --> 파일들 저장하는 것은 multer path 관련 이슈로 다 따로 빼 두었음
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                prob_name:
+                  type: string
+                  description: 문제 이름 필드
+                time_limit:
+                  type: number
+                  description: 문제별로 할당된 시간 제한
+              required:
+                - prob_name
+                - time_limit
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
   /problem/pdf:
     post:
       tags:
         - Problem
-      summary: 문제를 생성하는 api
+      security:
+        - BearerAuth : []
+      summary: pdf 파일 저장하는 api
       requestBody:
         content:
           multipart/form-data:
@@ -421,10 +443,57 @@ paths:
                 - pdf
       responses:
         '200':
-          $ref: '#/components/responses/200'        
+          $ref: '#/components/responses/200'
       
+  /problem/inp:
+    post:
+      tags:
+        - Problem
+      security:
+        - BearerAuth : []
+      summary: inp 파일들 저장하는 api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                pdf:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    description: pdf 파일 업로드 공간
+              required:
+                - pdf
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
 
-
+  /problem/out:
+    post:
+      tags:
+        - Problem
+      security:
+        - BearerAuth : []
+      summary: out 파일들 저장하는 api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                pdf:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    description: pdf 파일 업로드 공간
+              required:
+                - pdf
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
 
 # === components =========================================================
 components:

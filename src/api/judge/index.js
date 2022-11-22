@@ -11,8 +11,10 @@ const path = require('path');
 
 const {PythonShell} = require('python-shell');
 
-// judge.use(auth.login);
-// judge.use(auth.level1);
+judge.use(auth.login);
+judge.use(auth.level1);
+
+
 
 judge.post('/', judgeCtrl.judge);
 

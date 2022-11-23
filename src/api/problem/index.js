@@ -26,7 +26,8 @@ problem.post('/', problemCtrl.createProblem); // problem create
 problem.post('/pdf', problemCtrl.upPdf); // pdf file upload api
 problem.post('/inp', problemCtrl.upInp); // inp files upload api
 problem.post('/out', problemCtrl.upOut); // pdf files upload api
-problem.delete('/', problemCtrl.delProb);
+
+problem.delete('/:probNum', problemCtrl.delProb);
 
 problem.get('/maxProbNum', problemCtrl.showMaxProbNum);
 

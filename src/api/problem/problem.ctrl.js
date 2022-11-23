@@ -153,9 +153,25 @@ exports.delProb = async(ctx, next)=>{
     params = Joi.object({
         probNum: Joi.number().required()
     }).validate(ctx.params);
-
+    console.log(params.error);
     if(params.error) ctx.throw(400, "잘못된 요청입니다.");
 
-    fs.unlinkSync
+    const {probNum} = params.value;
 
+    // path 저장
+    const delPath = path.join(__dirname + `../../../public/problem/${probNum}`); 
+    // 위에 path 코드 동기로 안짜도 되는지 확인필요
+    
+    // console.log(delPath);
+
+    const delResult = await problem.deleteProblem(probNum); // db 에서 probnum row 삭제
+
+    await fs.rmdir(delPath, {recursive : true}, err => {
+        console.log("errMsg : ", err);
+    }); // 문제 번호로 폴더 삭제
+
+
+    ctx.body = {
+        status: 200
+    }
 }

@@ -14,10 +14,11 @@ create table judge(
     uuid int not null auto_increment primary key,
     user_uuid binary(16), 
     prob_num int,
-    time_limie float,
+    time_limit float,
     prob_state boolean,
     prog_lang varchar(10),
     code longtext,
+    -- atk_dep
     date datetime
 );
 
@@ -30,11 +31,11 @@ create table problem(
 use studySite;
 
 show tables;
-select * from user where id=1;
+select * from judge;
 select * from problem;
 select * from user;
 
-drop table problem;
+drop table judge;
 delete from user where id = 1;
 
 select * from mysql.slow_log;

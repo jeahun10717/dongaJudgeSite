@@ -3,7 +3,7 @@ const Joi = require('joi');
 const axios = require('axios');
 const path = require('path');
 const { params } = require('../users');
-const userDB = require('../../databases/models/user');
+const { user, judge, problem } = require('../../databases');
 const fs = require('fs');
 
 const {c, cpp, node, python, java} = require('compile-run');
@@ -15,40 +15,31 @@ exports.judge = async (ctx, next)=>{
     const bodyVal = Joi.object({
         prob_num: Joi.number().required(),
         code: Joi.string().required(),
-        prog_lang: Joi.string().required()
+        prog_lang: Joi.string().required(),
     }).validate(ctx.request.body);
     
     if(bodyVal.error) { // 에러 핸들링
         console.log(bodyVal.error);
         ctx.throw(400); 
     }
-    const {prob_num, code} = bodyVal.value;
+
+
+    
+    const { UUID } = ctx.request.user;
+    const bufUUID = Buffer.from(UUID, 'hex') 
+    console.log(bufUUID);
+    const userInfo = await user.isExistFromUUID(bufUUID);
+    console.log(userInfo);
+    const { prob_num, code, prog_lang } = bodyVal.value;
+    const probInfo  = await problem.timeLimit(prob_num);
+    const time_limit = probInfo[0].time_limit;
+    // console.log();
+    console.log(time_limit, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
     const inpDirPath = path.join(__dirname, `../../public/problem/${prob_num}/inp/`)
     const outDirPath = path.join(__dirname, `../../public/problem/${prob_num}/out/`)
     const inpFileList = fs.readdirSync(inpDirPath)
     const outFileList = fs.readdirSync(outDirPath)
-
-    
-
-    // inpFileList.map( fileName => {
-    //     fs.readFie(path.join(inpDirPath + fileName), 'utf-8', (err, data) => { // 파일 읽기
-    //         // TODO: c, cpp, python, java
-    //         let sourcecode = code; // compile 을 위한 소스코드 입력
-    //         let resultPromise = 
-    //         cpp.runSource(sourcecode, {stdin:data})
-    //         .then(result => {
-                
-    //         })
-    //         .catch(err => {
-    //             compileResult.append({
-    //                 inpDataName: fileName, 
-    //                 compileStatus: "compile fail",
-    //                 errorMsg: err
-    //             })
-    //         })
-
-    //     })
-    // })
 
     let fileLen;
     let compileResult = [];
@@ -61,7 +52,7 @@ exports.judge = async (ctx, next)=>{
         const inpFileData = fs.readFileSync(path.join(inpDirPath + inpFileList[fileIdx]), 'utf-8');
         const outFileData = fs.readFileSync(path.join(outDirPath + outFileList[fileIdx]), 'utf-8');
         let sourcecode = code;
-        let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData});
+        let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData}, {timeout:1});
         await resultPromise
         .then((result) => {
             // console.log("@@@@@", result);
@@ -97,6 +88,17 @@ exports.judge = async (ctx, next)=>{
     // console.log("--------->", outFileList);
 
     const filteredErrMsg = errorMsgArr.filter((item, index) => errorMsgArr.indexOf(item) === index);
+    const probState = fileLen / correctCnt == 1
+    console.log(probState);
+    // const result = judge.insert({
+    //     prob_num, 
+    //     code, 
+    //     prog_lang,
+    //     user_uuid: bufUUID,
+    //     time_limit,
+
+    // })
+
      ctx.body = {
          status:200,
          totalJudgeDataCnt: fileLen,

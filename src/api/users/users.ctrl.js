@@ -16,7 +16,7 @@ exports.isExist = async (ctx) => {
         access_token: Joi.string().required()
     }).validate(ctx.request.body);
     if (params.error) ctx.throw(400, '잘못된 요청');
-
+    
     const {
         access_token
     } = params.value;

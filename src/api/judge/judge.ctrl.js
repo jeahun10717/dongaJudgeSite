@@ -52,8 +52,8 @@ exports.judge = async (ctx, next)=>{
         const inpFileData = fs.readFileSync(path.join(inpDirPath + inpFileList[fileIdx]), 'utf-8');
         const outFileData = fs.readFileSync(path.join(outDirPath + outFileList[fileIdx]), 'utf-8');
         let sourcecode = code;
-        let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData}, {timeout:1});
-        await resultPromise
+        let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData, timeout:1000});
+        const compilerResult =  await resultPromise
         .then((result) => {
             // console.log("@@@@@", result);
             console.log(result.stdout);
@@ -82,6 +82,8 @@ exports.judge = async (ctx, next)=>{
             console.log(err);
         })
     }
+
+    console.log(compileResult, "##############################");
 
     // console.log("--------->", compileResult);
     // console.log("--------->", inpFileList);

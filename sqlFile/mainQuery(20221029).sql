@@ -18,8 +18,9 @@ create table judge(
     prob_state boolean,
     prog_lang varchar(10),
     code longtext,
-    -- atk_dep
-    date datetime
+    depence_cnt int,
+    attacked_cnt int,
+	date datetime
 );
 
 create table problem(
@@ -28,6 +29,16 @@ create table problem(
     time_limit float
 );
 
+alter table judge
+add foreign key (user_uuid) 
+references user (uuid)
+on delete cascade;
+
+alter table judge
+add foreign key (prob_num) 
+references problem (prob_num)
+on delete cascade;
+
 use studySite;
 
 show tables;
@@ -35,7 +46,9 @@ select * from judge;
 select * from problem;
 select * from user;
 
-drop table judge;
+-- drop table judge;
+-- drop table user; 
+-- drop table problem;
 delete from user where id = 1;
 
 select * from mysql.slow_log;

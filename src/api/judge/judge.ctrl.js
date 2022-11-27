@@ -32,9 +32,10 @@ exports.judge = async (ctx, next)=>{
     console.log(userInfo);
     const { prob_num, code, prog_lang } = bodyVal.value;
     const probInfo  = await problem.timeLimit(prob_num);
-    const time_limit = probInfo[0].time_limit;
+    let time_limit = probInfo[0].time_limit;
+    time_limit = parseInt((time_limit * 1000) * 11 / 10)
     // console.log();
-    console.log(time_limit, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    // console.log(time_limit, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
     const inpDirPath = path.join(__dirname, `../../public/problem/${prob_num}/inp/`)
     const outDirPath = path.join(__dirname, `../../public/problem/${prob_num}/out/`)
@@ -52,9 +53,10 @@ exports.judge = async (ctx, next)=>{
         const inpFileData = fs.readFileSync(path.join(inpDirPath + inpFileList[fileIdx]), 'utf-8');
         const outFileData = fs.readFileSync(path.join(outDirPath + outFileList[fileIdx]), 'utf-8');
         let sourcecode = code;
-        let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData, timeout:1000});
-        const compilerResult =  await resultPromise
-        .then((result) => {
+        console.log(time_limit);
+        let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData, timeout:time_limit});
+        const compilerResult =  
+        await resultPromise.then((result) => {
             // console.log("@@@@@", result);
             console.log(result.stdout);
             if(outFileData == result.stdout) { // 해당 채점 데이터가 정답일 경우

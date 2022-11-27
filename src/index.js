@@ -6,12 +6,17 @@ const cors = require('@koa/cors');
 const xss = require('xss');
 const helmet = require('koa-helmet');
 const multer = require('@koa/multer');
+const mount = require('koa-mount')
+const path = require('path');
+const xFrameOptions = require('x-frame-options');
+// const serve = require('koa-static');
 const form_data = multer();
 
 const app = new koa();
 const router = new Router();
 
 const serve = require('koa-static');
+
 
 const api = require('./api')
 
@@ -120,7 +125,7 @@ router.get('/oauth',async (ctx)=>{
    const kakaoData = await oauth.kakao(code);
    ctx.body = kakaoData;
 });
-
+console.log(__dirname + '/public/problem');
 app.use(cors());
 app.use(// koa helmet 적용- 보안관련
   helmet({
@@ -130,7 +135,10 @@ app.use(// koa helmet 적용- 보안관련
 router.use('/api', api.routes());
 app.use(serve(__dirname + '/build'))
 // app.use(cors()); 
-app.use(serve('./public'))
+app.use(serve('/public/problem'));
+app.use(mount('/static', serve(path.join(__dirname+'/public/problem'))))
+
+
 app.use(serve('./multerFIleTest'))
 app.use(bodyParser({
     jsonLimit: '1000mb', extended: true}))

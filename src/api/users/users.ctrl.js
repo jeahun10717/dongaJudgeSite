@@ -51,7 +51,7 @@ exports.isExist = async (ctx) => {
     } else {
         ctx.body = {
             status: 200,
-            data: {
+            result: {
                 isExist: isExist ? true : false,
                 access_token: myToken,
                 // Auth: result.Auth
@@ -85,6 +85,8 @@ exports.regist = async(ctx, next) => {
         const errorMsg = params.error.details[0].message;
         const regexp = new RegExp(/^\"[a-zA-Z\_]{0,}\"/, "g");
         const throwErrMsg = regexp.exec(errorMsg);
+        console.log(params.error);
+        console.log(throwErrMsg[0]);
         ctx.throw(400, throwErrMsg[0])
       };
       

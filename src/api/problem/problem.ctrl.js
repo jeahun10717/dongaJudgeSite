@@ -11,7 +11,7 @@ exports.showProblem = async(ctx)=>{
         pageNum: Joi.number().required(),
         contentsCnt: Joi.number().required(),
     }).validate(ctx.query);
-    console.log(query.error);
+    // console.log(query.error);
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
     const { orderForm, pageNum, contentsCnt } = query.value;
@@ -43,7 +43,8 @@ exports.createProblem = async(ctx, next) => {
     
     const bodyData = Joi.object({
         prob_name: Joi.string().required(),
-        time_limit: Joi.number().default(1)
+        time_limit: Joi.number().default(1000),
+        correct_code: Joi.string().required()
     }).validate(ctx.request.body);
     console.log(ctx.request.body);
     if(bodyData.error) {

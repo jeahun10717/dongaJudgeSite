@@ -39,6 +39,6 @@ exports.deleteProblem = async(probNum) => {
     return await db.query('delete from problem where prob_num = ?', probNum);
 }
 
-exports.timeLimit = async(probNum) => {
+exports.problemFromProbNum = async(probNum) => {
     return await db.query('select * from problem where prob_num = ?', probNum);
 }

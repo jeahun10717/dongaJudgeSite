@@ -27,6 +27,7 @@ exports.isExist = async (ctx) => {
     kakao_id = `kakao:${kakaoData.id}`;
     const isExist = await user.isExist(kakao_id);
 
+
     // const bufUUID = Buffer.from(isExist.uuid, 'hex');
     // const result = await User.isExistFromUUID(bufUUID);
 
@@ -45,7 +46,8 @@ exports.isExist = async (ctx) => {
             result: {
                 Auth: result.Auth,
                 isExist: isExist ? true : false,
-                access_token: myToken
+                access_token: myToken,
+                name: result.name
             }
         }
     } else {
@@ -53,8 +55,6 @@ exports.isExist = async (ctx) => {
             status: 200,
             result: {
                 isExist: isExist ? true : false,
-                access_token: myToken,
-                // Auth: result.Auth
             }
         }
     }

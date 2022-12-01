@@ -355,6 +355,111 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200'
+# === Judge ========================================================================
+  /Judge:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Judge
+      summary: 문제들 보여주는 api
+      description: orderForm, pageCnt, contentsCnt
+      parameters:
+        - in: query
+          name: pageNum
+          schema:
+            type: integer
+          description: 페이지 번호
+          required: true
+        - in: query
+          name: orderForm
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+              - DESC
+              - ASC
+            default: asc
+          description: 오름차순 내림차순-> asc desc 
+          required: true
+        - in: query
+          name: contentsCnt
+          schema:
+            type: integer
+          description: 한페이지당 보여지는 문제 개수
+          required: true
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - Judge
+      summary: 채점 api
+      description: 채점 진행하는 api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                prob_num:
+                  type: integer
+                  description: 문제 번호
+                code:
+                  type: string
+                  description: 제출 소스코드
+                prog_lang:
+                  type: string
+                  description: 프로그래밍 언어 지정
+              required:
+                - prob_num
+                - code
+                - prog_lang
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+  /Judge/attack:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - Judge
+      summary: 소스 공격 방어 로직
+      description: attackJudgeUUID -> 공격할 대상의 채점현황<\br>attackProbNum -> 공격할 대상의 문제번호 <\br>attackDataSet -> 공격을 진행할 inp data set
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                attackJudgeUUID:
+                  type: string
+                  description: 공격대상의 judge uuid
+                attackProbNum:
+                  type: string
+                  description: 공격대상의 prob_num
+                attackDataSet:
+                  type: string
+                  description: 공격을 진행할 inp data set
+              required:
+                - attackJudgeUUID
+                - attackProbNum
+                - attackDataSet
+      responses:
+        '200':
+          description: attStatus 가 Success 일 때 공격성공(방어실패), Fail 일 때가 공격실패(방어성공)
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  attStatus:
+                    \[Success || Fail\]
 
 # === Problem ======================================================================
   /problem:
@@ -414,9 +519,13 @@ paths:
                 time_limit:
                   type: number
                   description: 문제별로 할당된 시간 제한
+                correct_code:
+                  type: string
+                  description: 문제별로 할당된 시간 제한
               required:
                 - prob_name
                 - time_limit
+                - correct_code
       responses:
         '200':
             $ref: '#/components/responses/200'

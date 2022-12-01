@@ -16,9 +16,10 @@ judge.use(auth.login);
 judge.use(auth.level1);
 
 
-
+judge.get('/', judgeCtrl.showJudge);
+judge.get('/:judgeUUID', judgeCtrl.showJudgeByUUID);
 judge.post('/', judgeCtrl.judge);
-
+judge.post('/attack', judgeCtrl.attack);
 // judge.post('/', cppUpload.single('test'),judgeCtrl.judge);
 
 module.exports = judge;

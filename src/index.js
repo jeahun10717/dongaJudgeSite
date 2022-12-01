@@ -10,6 +10,7 @@ const mount = require('koa-mount')
 const path = require('path');
 const xFrameOptions = require('x-frame-options');
 // const serve = require('koa-static');
+
 const form_data = multer();
 
 const app = new koa();
@@ -127,11 +128,18 @@ router.get('/oauth',async (ctx)=>{
 });
 console.log(__dirname + '/public/problem');
 app.use(cors());
-app.use(// koa helmet 적용- 보안관련
-  helmet({
-    contentSecurityPolicy: false,
-  })
-);
+// app.use(// koa helmet 적용- 보안관련
+//   helmet({
+//     contentSecurityPolicy: false,
+//     xFrameOptions: "allow"
+//   })
+// );
+
+// app.use((ctx, next) => {
+//    ctx.set("X-Frame-Options", "ALLOW-FROM http://192.168.0.177:3000");
+//    next();
+//  });
+
 router.use('/api', api.routes());
 app.use(serve(__dirname + '/build'))
 // app.use(cors()); 

@@ -33,6 +33,14 @@ create table problem(
     submit_cnt int
 );
 
+create table board(
+	b_num int not null auto_increment primary key,
+    b_name text,
+    user_uuid binary(16),
+    b_text longtext,
+    
+);
+
 alter table judge
 add foreign key (user_uuid) 
 references user (uuid)

@@ -1,13 +1,9 @@
-const multer = require('@koa/multer');
 const Joi = require('joi');
-const axios = require('axios');
 const path = require('path');
-const { params } = require('../users');
 const { user, judge, problem } = require('../../databases');
 const fs = require('fs');
 
 const {c, cpp, node, python, java} = require('compile-run');
-const { stdin } = require('process');
 
 // const spawn = require('child_process').spawnSync;
 

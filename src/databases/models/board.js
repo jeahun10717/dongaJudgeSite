@@ -7,19 +7,23 @@ exports.create = async (query) => {
 }
 
 exports.showMaxProbNum = async () => {
-    return await db.query("SELECT MAX(prob_num) AS MAX_NUM from problem")
+    return await db.query("SELECT MAX(prob_num) AS MAX_NUM from board")
 }
 
 exports.showAll = async () => {
-    return await db.query("SELECT * FROM problem");
+    return await db.query("SELECT * FROM board");
 }
 
-exports.pagenatedProb = async (orderForm, pageNum, contentsNum) =>{
+exports.showOne = async (boardID) => {
+    return await db.query("SELECT * FROM board where b_id = ?", boardID);
+}
+
+exports.pagenatedBoard = async (orderForm, pageNum, contentsNum) =>{
     return await db.query(
         `
         select *
-        from problem
-        order by prob_num ${orderForm}
+        from board
+        order by b_id ${orderForm}
         limit ? offset ?
         `
         ,[contentsNum, pageNum * contentsNum]
@@ -27,14 +31,14 @@ exports.pagenatedProb = async (orderForm, pageNum, contentsNum) =>{
 }
 
 exports.totalContentsCnt = async()=>{
-    const [result] = await db.query(`select count(*) cnt from problem`);
+    const [result] = await db.query(`select count(*) cnt from board`);
     return result.cnt;
 }
 
-exports.deleteProblem = async(probNum) => {
-    return await db.query('delete from problem where prob_num = ?', probNum);
+exports.deleteBoard = async(b_id) => {
+    return await db.query('delete from board where b_id = ?', b_id);
 }
 
 exports.problemFromProbNum = async(probNum) => {
-    return await db.query('select * from problem where prob_num = ?', probNum);
+    return await db.query('select * from board where prob_num = ?', probNum);
 }

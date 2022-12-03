@@ -3,6 +3,7 @@ const koa = require('koa');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
+// const cors = require('cors');
 const xss = require('xss');
 const helmet = require('koa-helmet');
 const multer = require('@koa/multer');
@@ -126,8 +127,6 @@ router.get('/oauth',async (ctx)=>{
    const kakaoData = await oauth.kakao(code);
    ctx.body = kakaoData;
 });
-console.log(__dirname + '/public/problem');
-app.use(cors());
 // app.use(// koa helmet 적용- 보안관련
 //   helmet({
 //     contentSecurityPolicy: false,
@@ -140,16 +139,16 @@ app.use(cors());
 //    next();
 //  });
 
+
+app.use(cors({origin: '*'})); 
 router.use('/api', api.routes());
-app.use(serve(__dirname + '/build'))
-// app.use(cors()); 
+app.use(serve(__dirname + '/build'));
 app.use(serve('/public/problem'));
-app.use(mount('/static', serve(path.join(__dirname+'/public/problem'))))
+app.use(mount('/static', serve(path.join(__dirname+'/public/problem'))));
 
 
-app.use(serve('./multerFIleTest'))
-app.use(bodyParser({
-    jsonLimit: '1000mb', extended: true}))
+app.use(serve('./multerFIleTest'));
+app.use(bodyParser({ jsonLimit: '1000mb', extended: true }));
 // app.use(form_data.array());
 // app.use(form_data.fields());
 
@@ -157,7 +156,7 @@ app.use(require('koa-morgan')('dev'));
 app.use(error);
 app.use(token.jwtMiddleware);
 app.use(router.routes()).use(router.allowedMethods());
-app.use(require('./swagger'))
+app.use(require('./swagger'));
 
 app.listen(4000, ()=>{
    console.log("kakao OAuth test server port: 4000");

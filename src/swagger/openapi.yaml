@@ -5,7 +5,7 @@ info:
     REST API 문서
   version: 1.0.0
 servers:
-  - url: 'http://192.168.0.86:4000/api'
+  - url: 'http://168.115.96.213:4000/api'
 
 paths:
 # === User ======================================================================
@@ -362,7 +362,7 @@ paths:
         - BearerAuth: []
       tags:
         - Judge
-      summary: 문제들 보여주는 api
+      summary: 채점현황 보여주는 api
       description: orderForm, pageCnt, contentsCnt
       parameters:
         - in: query
@@ -422,6 +422,26 @@ paths:
       responses:
         '200':
             $ref: '#/components/responses/200'
+  /Judge/{judgeUUID}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Judge
+      summary: 채점현황 1개 자세히 보여주는 부분
+      description: judge 의 uuid 로 조회해서 채점현황 상세조회
+      parameters:
+        - in: path
+          name: judgeUUID
+          required: true
+          description: this is id
+          schema:
+            type: integer
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+
   /Judge/attack:
     post:
       security:
@@ -600,6 +620,132 @@ paths:
                     description: pdf 파일 업로드 공간
               required:
                 - pdf
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+  /problem/{probNum}:
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - Problem
+      summary: 자신이 작성한 게시물중 하나 삭제하는 api
+      description: probNum으로 삭제하는데 모든 폴더를 삭제함으로 한 번 팝업창으로 한 번 띄워줄 필요가 있음
+      parameters:
+        - in: path
+          name: probNum
+          required: true
+          description: 문제 번호로 삭제
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+
+# === Board ==============================================================
+
+  /board:
+
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - Board
+      summary: 게시판 글 생성하는 api
+      description: 게시판 글 작성 api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 문제 이름 필드
+                main_text:
+                  type: number
+                  description: 문제별로 할당된 시간 제한
+              required:
+                - title
+                - main_text
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Board 
+      summary: 게시판 보여주는 api --> 페이지네이션 포함
+      description: orderForm, pageCnt, contentsCnt
+      parameters:
+        - in: query
+          name: pageNum
+          schema:
+            type: integer
+          description: 페이지 번호
+          required: true
+        - in: query
+          name: orderForm
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+              - DESC
+              - ASC
+            default: asc
+          description: 오름차순 내림차순-> asc desc 
+          required: true
+        - in: query
+          name: contentsCnt
+          schema:
+            type: integer
+          description: 한페이지당 보여지는 문제 개수
+          required: true
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+
+    
+
+      
+            
+  /board/{b_id}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Board 
+      summary: 게시판 보여주는 api --> 1개만 상세히 보여주는 api
+      description: board 의 b_id 로 조회해서 게시물 상세조회
+      parameters:
+        - in: path
+          name: b_id
+          required: true
+          description: this is id
+          schema:
+            type: integer
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+    
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - Board
+      summary: 자신이 작성한 게시물중 하나 삭제하는 api
+      description: b_id 로 삭제하는데 쿠키에 담긴 token 값이랑 b_id 에 해당하는 user_uuid 비교해서 일치하면 삭제 진행
+      parameters:
+        - in: path
+          name: b_id
+          required: true
+          description: 문제 번호로 삭제
+          schema:
+            type: integer
       responses:
         '200':
           $ref: '#/components/responses/200'

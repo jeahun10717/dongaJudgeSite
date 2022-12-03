@@ -34,12 +34,15 @@ create table problem(
 );
 
 create table board(
-	b_num int not null auto_increment primary key,
-    b_name text,
+	b_id int not null auto_increment primary key,
+    title text,
     user_uuid binary(16),
-    b_text longtext,
-    
+	main_text longtext
 );
+
+use studySite;
+
+drop table board;
 
 alter table judge
 add foreign key (user_uuid) 
@@ -49,6 +52,11 @@ on delete cascade;
 alter table judge
 add foreign key (prob_num) 
 references problem (prob_num)
+on delete cascade;
+
+alter table board
+add foreign key (user_uuid)
+references user (uuid)
 on delete cascade;
 
 alter table user modify column regist_at date default now();
@@ -74,6 +82,7 @@ show tables;
 select * from judge;
 select * from problem;
 select * from user;
+select * from board;
 
 -- drop table judge;
 -- drop table user; 

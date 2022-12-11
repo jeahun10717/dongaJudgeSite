@@ -29,6 +29,22 @@ exports.pagenatedJudge = async (orderForm, pageNum, contentsNum) =>{
     )
 }
 
+exports.pagenatedOneProbJudge = async (probNum, orderForm, pageNum, contentsNum) =>{
+    // orderFrom : asc || desc
+    // pageNum : 페이지 번호
+    // contentsNum : 한 페이지에 보여줄 컨텐츠 개수
+    return await db.query(
+        `
+        select *
+        from judge
+        where prob_num = ?
+        order by prob_num ${orderForm}
+        limit ? offset ?
+        `
+        ,[probNum, contentsNum, pageNum * contentsNum]
+    )
+}
+
 exports.totalContentsCnt = async()=>{
     const [result] = await db.query(`select count(*) cnt from judge`);
     return result.cnt;

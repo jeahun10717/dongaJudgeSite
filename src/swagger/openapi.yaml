@@ -363,8 +363,24 @@ paths:
       tags:
         - Judge
       summary: 채점현황 보여주는 api
-      description: orderForm, pageCnt, contentsCnt
+      description:   
+        showFlag 는 all 과 some 이 존재.<br>all 은 페이지네이션에서 다른 필터링 없이 모든 걸 보여줘야 할 때 사용<br>some 은 prob_num 이라는 필터링을 거쳐서 페이지네이션 후 보여줌<br>여기서 showFlag 가 만약 all 이면 prob_num 에 숫자 넣어도 필터링안됨<br>필터링 하고 싶으면 무조건 showFlag == some 이고 probNum = {문제번호} 형태여야 함
       parameters:
+        - in: query
+          name: showFlag
+          schema:
+            type: string
+            enum: 
+              - all
+              - some
+          description: 만약 전체를 다 보여줘야 한다면 all 을 일부 prob_num 을 지정해서 보여줘야한다면 some 을 지정
+          required: true
+        - in: query
+          name: probNum
+          schema:
+            type: integer
+          description: 페이지네이션을 진행할 문제 번호 default는 -1
+          required: true
         - in: query
           name: pageNum
           schema:

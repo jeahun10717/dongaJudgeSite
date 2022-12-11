@@ -231,6 +231,8 @@ exports.attack = async (ctx, next) => {
 
 exports.showJudge = async (ctx, next) => {
     const query = Joi.object({
+        showFlag: Joi.string().valid('all', 'some').default('all').required(),
+        probNum: Joi.number().default(-1).required(),
         orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
         pageNum: Joi.number().required(),
         contentsCnt: Joi.number().required(),
@@ -238,9 +240,18 @@ exports.showJudge = async (ctx, next) => {
     // console.log(query.error);
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
-    const { orderForm, pageNum, contentsCnt } = query.value;
+    const { showFlag, probNum, orderForm, pageNum, contentsCnt } = query.value;
 
-    const nPage = await judge.pagenatedJudge(orderForm, pageNum, contentsCnt);
+    let nPage;
+    if(showFlag == 'all'){
+        nPage = await judge.pagenatedJudge(orderForm, pageNum, contentsCnt);
+    }else if(showFlag == 'some'){
+        nPage = await judge.pagenatedOneProbJudge(probNum, orderForm, pageNum, contentsCnt);
+    }
+    
+
+    
+
     const totalContentCnt = await judge.totalContentsCnt();
 
 

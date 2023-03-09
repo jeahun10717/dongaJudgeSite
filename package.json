@@ -4,7 +4,9 @@
   "description": "gusangD&C webPage",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pm2 start ecosystem.config.js --only projectName-dev --env development",
+    "start": "pm2 start ecosystem.config.js --only projectName-pd --env production",
+    "del": "pm2 del all"
   },
   "author": "",
   "license": "ISC",
@@ -31,6 +33,7 @@
     "multer-s3": "^2.9.0",
     "mysql2": "^2.2.5",
     "nodemon": "^2.0.15",
+    "pm2": "^5.2.2",
     "python-shell": "^3.0.1",
     "random-string": "^0.2.0",
     "serve": "^11.3.2",

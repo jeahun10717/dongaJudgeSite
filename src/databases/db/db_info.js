@@ -1,10 +1,10 @@
 module.exports = {
    localhost: {
       connectionLimit : 20,
-      host:'127.0.0.1',
+      host:'ojsdb.cvey5osjmlyk.ap-northeast-2.rds.amazonaws.com',
       port:'3306',
-      user:'root',
-      password:'1234',
+      user:'admin',
+      password:'wpgns1234',
       database:'studySite'
    }
 }

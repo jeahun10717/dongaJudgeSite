@@ -603,14 +603,14 @@ paths:
             schema:
               type: object
               properties:
-                pdf:
+                inp:
                   type: array
                   items:
                     type: string
                     format: binary
-                    description: pdf 파일 업로드 공간
+                    description: input txt 파일 업로드 공간
               required:
-                - pdf
+                - inp
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -628,14 +628,14 @@ paths:
             schema:
               type: object
               properties:
-                pdf:
+                out:
                   type: array
                   items:
                     type: string
                     format: binary
-                    description: pdf 파일 업로드 공간
+                    description: output txt 파일 업로드 공간
               required:
-                - pdf
+                - out
       responses:
         '200':
           $ref: '#/components/responses/200'

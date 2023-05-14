@@ -22,7 +22,7 @@ exports.create = async (ctx, next) => {
         user_uuid: Buffer.from(ctx.request.user.UUID, 'hex'),
     })
 
-    console.log(ctx.request.user);
+    // console.log(ctx.request.user);
     ctx.body = {
         status:200,
     }

@@ -7,6 +7,7 @@ const {c, cpp, node, python, java} = require('compile-run');
 
 // const spawn = require('child_process').spawnSync;
 
+
 exports.judge = async (ctx, next)=>{
     const bodyVal = Joi.object({
         prob_num: Joi.number().required(),
@@ -20,15 +21,15 @@ exports.judge = async (ctx, next)=>{
 
 
     const { UUID } = ctx.request.user;
-    const bufUUID = Buffer.from(UUID, 'hex') 
+    const bufUUID = Buffer.from(UUID, 'hex');
     // console.log(bufUUID);
     const userInfo = await user.isExistFromUUID(bufUUID);
     // console.log(userInfo);
     const { prob_num, code, prog_lang } = bodyVal.value;
     const probInfo  = await problem.problemFromProbNum(prob_num);
-    console.log(probInfo);
+    // console.log(probInfo);
     let time_limit = probInfo[0].time_limit;
-    time_limit = parseInt(time_limit * 11 / 10)
+    time_limit = parseInt(time_limit * 11 / 10);
 
 
     const inpDirPath = path.join(__dirname, `../../public/problem/${prob_num}/inp/`)
@@ -42,8 +43,7 @@ exports.judge = async (ctx, next)=>{
     if(inpFileList.length != outFileList.length) ctx.throw(500, "inp 파일과 out 파일의 개수가 다릅니다. 관리자에게 문의하세요.")
     else fileLen = inpFileList.length;
     let judgeresult, correctCnt = 0;
-    for (let fileIdx = 0; fileIdx < fileLen; fileIdx++) {
-        
+    for (let fileIdx = 0; fileIdx < fileLen; fileIdx++) {    
         const inpFileData = fs.readFileSync(path.join(inpDirPath + inpFileList[fileIdx]), 'utf-8');
         const outFileData = fs.readFileSync(path.join(outDirPath + outFileList[fileIdx]), 'utf-8');
         let sourcecode = code;
@@ -92,7 +92,7 @@ exports.judge = async (ctx, next)=>{
     // console.log(isEmpty);
     // console.log(probState);
     let result;
-    if(isExistArr.length == 0){ // uuid 에 해당하는 유저가 prob_num 문제를 제출한 적이 없을 경우
+    // if(isExistArr.length == 0){ // uuid 에 해당하는 유저가 prob_num 문제를 제출한 적이 없을 경우
         result = judge.insert({
             prob_num,
             code,
@@ -104,28 +104,28 @@ exports.judge = async (ctx, next)=>{
             depence_cnt: 0,
             weak_status: 0,
         })    
-    }else{
-        console.log("&****************^&*%*%^^*%*%^*^&%*^*^&");
-        result = judge.update(bufUUID, {
-            prob_num,
-            code,
-            prog_lang,
-            user_uuid: bufUUID,
-            time_limit,
-            prob_state: probState,
-            attacked_cnt: 0,
-            depence_cnt: 0,
-            weak_status: 0,
-            date: new Date()
-        }, prob_num)
-    }
+    // }else{
+        // console.log("&****************^&*%*%^^*%*%^*^&%*^*^&");
+        // result = judge.update(bufUUID, {
+        //     prob_num,
+        //     code,
+        //     prog_lang,
+        //     user_uuid: bufUUID,
+        //     time_limit,
+        //     prob_state: probState,
+        //     attacked_cnt: 0,
+        //     depence_cnt: 0,
+        //     weak_status: 0,
+        //     date: new Date()
+        // }, prob_num)
+    // }
 
      ctx.body = {
          status:200,
          totalJudgeDataCnt: fileLen,
          correctCnt,
          errMsg: filteredErrMsg
-     }
+    }
 }
 
 exports.attack = async (ctx, next) => {
@@ -281,3 +281,7 @@ exports.showJudgeByUUID = async(ctx, next)=>{
         result: judgeResult
     }
 }
+
+
+
+

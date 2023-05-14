@@ -43,7 +43,7 @@ exports.createProblem = async(ctx, next) => {
     
     const bodyData = Joi.object({
         prob_name: Joi.string().required(),
-        time_limit: Joi.number().default(1000),
+        time_limit: Joi.number().default(1000), // ms 단위
         correct_code: Joi.string().required()
     }).validate(ctx.request.body);
     console.log(ctx.request.body);
@@ -55,11 +55,17 @@ exports.createProblem = async(ctx, next) => {
         ctx.throw(400);
     }
     
-    let createDBret = await problem.create(bodyData.value);
-    console.log(createDBret.insertId);
-    const probNum = createDBret.insertId;
+    // let createDBret = await problem.create(bodyData.value);
+    // console.log(createDBret.insertId);
+    // const probNum = createDBret.insertId;
 
     fs.mkdir(path.join(__dirname, `../../public/problem/${probNum}`)) // 문제 번호에 해당하는 폴더 생성
+    fs.mkdir(path.join(__dirname, `../../public/markingData/${probNum}`)) // 문제 번호에 해당하는 폴더 생성
+
+    fs.mkdir(path.join(__dirname, `../../public/markingData/${probNum}/inp`)) // 문제 번호에 해당하는 inp data 폴더 생성
+    fs.mkdir(path.join(__dirname, `../../public/markingData/${probNum}/out`)) // 문제 번호에 해당하는 out data 폴더 생성
+    fs.mkdir(path.join(__dirname, `../../public/problem/${probNum}/pdf`)) // 문제 번호에 해당하는 inp data 폴더 생성
+
     // const inpStorage = await saveFile(ctx, next, probNum, "inp");
     // const outStorage = await saveFile(ctx, next, probNum, "out");
     // const pdfStorage = await saveFile(ctx, next, probNum, "pdf");
@@ -82,6 +88,11 @@ exports.createProblem = async(ctx, next) => {
     }
 
 }
+
+exports.upFiles = async(ctx, next) => {
+    
+}
+
 exports.upPdf = async(ctx, next) => {
     const maxProbNum = await problem.showMaxProbNum();
     const probNum = maxProbNum[0].MAX_NUM;

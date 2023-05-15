@@ -40,8 +40,6 @@ exports.showOne = async (ctx, next) => {
     const { b_id } = param.value;
     const [result] = await board.showOne(b_id);
 
-    // console.log(result);
-    // console.log(result);
 
     ctx.body = {
         status:200,
@@ -56,7 +54,7 @@ exports.showPagenated= async (ctx, next) => {
         contentsCnt: Joi.number().required(),
         boardType: Joi.string().valid('Community', 'Algorithm').required()
     }).validate(ctx.query);
-    // console.log(query.error);
+
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
     const { orderForm, pageNum, contentsCnt, boardType } = query.value;

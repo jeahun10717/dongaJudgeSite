@@ -8,15 +8,17 @@ const Joi = require('joi');
 exports.create = async (ctx, next) => {
     const body = Joi.object({
         title: Joi.string().required(),
-        main_text: Joi.string().required()
+        main_text: Joi.string().required(),
+        prob_num: Joi.number()
     }).validate(ctx.request.body);
-
+    console.log(body.error);
     if(body.error) ctx.throw(400, '잘못된 요청입니다.');
 
-    const { title, main_text } = body.value;
+    const { title, main_text, prob_num } = body.value;
 
     console.log(title, main_text);
     await board.create({
+        prob_num,
         title,
         main_text,
         user_uuid: Buffer.from(ctx.request.user.UUID, 'hex'),
@@ -51,13 +53,14 @@ exports.showPagenated= async (ctx, next) => {
         orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
         pageNum: Joi.number().required(),
         contentsCnt: Joi.number().required(),
+        boardType: Joi.string().valid('Community', 'Algorithm').required()
     }).validate(ctx.query);
-    console.log(query.error);
+    // console.log(query.error);
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
-    const { orderForm, pageNum, contentsCnt } = query.value;
+    const { orderForm, pageNum, contentsCnt, boardType } = query.value;
 
-    const nPage = await board.pagenatedBoard(orderForm, pageNum, contentsCnt);
+    const nPage = await board.pagenatedBoard(orderForm, pageNum, contentsCnt, boardType);
     const totalContentCnt = await board.totalContentsCnt();
 
 

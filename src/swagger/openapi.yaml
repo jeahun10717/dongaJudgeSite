@@ -542,7 +542,8 @@ paths:
       tags:
         - Problem
       summary: 문제 생성하는 api
-      description: 문제 생성하는 api --> 파일들 저장하는 것은 multer path 관련 이슈로 다 따로 빼 두었음
+      description: 문제 생성하는 api --> 파일들 저장하는 것은 multer path 관련 이슈로 다 따로 빼 두었음, 그리고 문제 등록후에 문제 번호가 할당되며 해당하는 문제 번호를 리턴해줌(밑에 response 예시 참조)
+
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -552,19 +553,31 @@ paths:
                 prob_name:
                   type: string
                   description: 문제 이름 필드
+                prob_level:
+                  type: number
+                  description: 문제 난이도 필드
+                prob_tag:
+                  type: string
+                  description: 문제 출처 필드
                 time_limit:
                   type: number
                   description: 문제별로 할당된 시간 제한
-                correct_code:
-                  type: string
-                  description: 문제별로 할당된 시간 제한
               required:
                 - prob_name
+                - prob_level
                 - time_limit
-                - correct_code
       responses:
         '200':
-            $ref: '#/components/responses/200'
+          description: 문제등록에 성공했을 때 200 과 함께 문제 번호 던져줌(probNum)
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  probNum: 6
+                  probCnt: 5
+        
   /problem/pdf:
     post:
       tags:
@@ -578,14 +591,20 @@ paths:
             schema:
               type: object
               properties:
+                prob_num:
+                  type: number
+                  description: pdf 데이터들을 올릴 문제 번호
+                  # description: pdf 를 등록할 문제 번호
                 pdf:
                   type: array
                   items:
                     type: string
                     format: binary
                     description: pdf 파일 업로드 공간
+                
               required:
                 - pdf
+                - prob_num
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -603,6 +622,9 @@ paths:
             schema:
               type: object
               properties:
+                prob_num:
+                  type: number
+                  description: inp 데이터들을 올릴 문제 번호
                 inp:
                   type: array
                   items:
@@ -611,6 +633,7 @@ paths:
                     description: input txt 파일 업로드 공간
               required:
                 - inp
+                - prob_num
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -628,6 +651,9 @@ paths:
             schema:
               type: object
               properties:
+                prob_num:
+                  type: number
+                  description: out 데이터들을 올릴 문제 번호
                 out:
                   type: array
                   items:
@@ -636,6 +662,7 @@ paths:
                     description: output txt 파일 업로드 공간
               required:
                 - out
+                - prob_num
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -675,6 +702,9 @@ paths:
             schema:
               type: object
               properties:
+                prob_num:
+                  type: number
+                  description: community 에 넣을 때는 이 필드 존재 / algorithm 에서는 이 필드 없음
                 title:
                   type: string
                   description: 문제 이름 필드
@@ -719,6 +749,15 @@ paths:
             type: integer
           description: 한페이지당 보여지는 문제 개수
           required: true
+        - in: query
+          name: boardType
+          scheme:
+            type: string
+            enum:
+              - Community
+              - Algorithm
+          description: 보드 타입 명시-> Community or Algorithm
+
 
       responses:
         '200':

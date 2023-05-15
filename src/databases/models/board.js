@@ -18,15 +18,16 @@ exports.showOne = async (boardID) => {
     return await db.query("SELECT * FROM board where b_id = ?", boardID);
 }
 
-exports.pagenatedBoard = async (orderForm, pageNum, contentsNum) =>{
+exports.pagenatedBoard = async (orderForm, pageNum, contentsNum, boardType) =>{
     return await db.query(
         `
         select *
         from board
+        where board_type = ?
         order by b_id ${orderForm}
         limit ? offset ?
         `
-        ,[contentsNum, pageNum * contentsNum]
+        ,[boardType, contentsNum, pageNum * contentsNum]
     )
 }
 

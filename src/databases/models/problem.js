@@ -42,3 +42,7 @@ exports.deleteProblem = async(probNum) => {
 exports.problemFromProbNum = async(probNum) => {
     return await db.query('select * from problem where prob_num = ?', probNum);
 }
+
+exports.probCnt = async() => {
+    return await db.query(`select count(*) as cnt from problem`)
+}

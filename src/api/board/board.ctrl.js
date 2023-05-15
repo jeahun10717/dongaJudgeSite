@@ -41,6 +41,7 @@ exports.showOne = async (ctx, next) => {
     const [result] = await board.showOne(b_id);
 
     // console.log(result);
+    // console.log(result);
 
     ctx.body = {
         status:200,

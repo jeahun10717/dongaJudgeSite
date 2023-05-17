@@ -9,18 +9,20 @@ exports.create = async (ctx, next) => {
     const body = Joi.object({
         title: Joi.string().required(),
         main_text: Joi.string().required(),
+        board_type: Joi.string().required(),
         prob_num: Joi.number()
     }).validate(ctx.request.body);
     console.log(body.error);
     if(body.error) ctx.throw(400, '잘못된 요청입니다.');
 
-    const { title, main_text, prob_num } = body.value;
+    const { title, main_text, prob_num, board_type } = body.value;
 
-    console.log(title, main_text);
+    // console.log(title, main_text);
     await board.create({
         prob_num,
         title,
         main_text,
+        board_type,
         user_uuid: Buffer.from(ctx.request.user.UUID, 'hex'),
     })
 
@@ -48,11 +50,15 @@ exports.showOne = async (ctx, next) => {
 }
 
 exports.showPagenated= async (ctx, next) => {
+
+    //TODO: prob_num 으로 조회가능하게 -> 만약 prob_num 이 undefined 면 전체 조회
+    // prob_num == -1 이면 boardType 으로만 분기
+    // prob_num != -1 이면 Prob_num 으로만 조회(boardType 신경 안씀)
     const query = Joi.object({
         orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
         pageNum: Joi.number().required(),
         contentsCnt: Joi.number().required(),
-        boardType: Joi.string().valid('Community', 'Algorithm').required()
+        boardType: Joi.string().required()
     }).validate(ctx.query);
 
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
@@ -60,7 +66,7 @@ exports.showPagenated= async (ctx, next) => {
     const { orderForm, pageNum, contentsCnt, boardType } = query.value;
 
     const nPage = await board.pagenatedBoard(orderForm, pageNum, contentsCnt, boardType);
-    const totalContentCnt = await board.totalContentsCnt();
+    const totalContentCnt = await board.totalContentsCnt(boardType);
 
 
     //TODO: pagination 을 위한 정보 어떤 거 필요한지 알아야 함

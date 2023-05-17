@@ -87,7 +87,7 @@ exports.createProblem = async(ctx, next) => {
     ctx.body = {
         status:200,
         probNum,
-        totalProbCnt:probCnt[0].cnt
+        // totalProbCnt:probCnt[0].cnt
     }
 
 }

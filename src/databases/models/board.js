@@ -31,8 +31,8 @@ exports.pagenatedBoard = async (orderForm, pageNum, contentsNum, boardType) =>{
     )
 }
 
-exports.totalContentsCnt = async()=>{
-    const [result] = await db.query(`select count(*) cnt from board`);
+exports.totalContentsCnt = async(boardType)=>{
+    const [result] = await db.query(`select count(*) cnt from board where board_type = ?`, boardType);
     return result.cnt;
 }
 

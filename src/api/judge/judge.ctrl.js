@@ -49,7 +49,7 @@ exports.judge = async (ctx, next)=>{
         let sourcecode = code;
         // console.log(time_limit);
         let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData, timeout:time_limit});
-        const compilerResult =  
+        const compilerResult =
         await resultPromise.then((result) => {
             // console.log("@@@@@", result);
             // console.log(result.stdout);

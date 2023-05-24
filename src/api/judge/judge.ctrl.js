@@ -29,11 +29,11 @@ exports.judge = async (ctx, next)=>{
     const probInfo  = await problem.problemFromProbNum(prob_num);
     // console.log(probInfo);
     let time_limit = probInfo[0].time_limit;
-    time_limit = parseInt(time_limit * 11 / 10);
+    time_limit = parseInt(time_limit * 11 / 10); // 채점 환경을 고려하여 10% 정도의 채점시간의 여유를 두는 부분
 
 
-    const inpDirPath = path.join(__dirname, `../../public/problem/${prob_num}/inp/`)
-    const outDirPath = path.join(__dirname, `../../public/problem/${prob_num}/out/`)
+    const inpDirPath = path.join(__dirname, `../../public/markingData/${prob_num}/inp/`)
+    const outDirPath = path.join(__dirname, `../../public/markingData/${prob_num}/out/`)
     const inpFileList = fs.readdirSync(inpDirPath)
     const outFileList = fs.readdirSync(outDirPath)
 
@@ -93,17 +93,16 @@ exports.judge = async (ctx, next)=>{
     // console.log(probState);
     let result;
     // if(isExistArr.length == 0){ // uuid 에 해당하는 유저가 prob_num 문제를 제출한 적이 없을 경우
-        result = judge.insert({
-            prob_num,
-            code,
-            prog_lang,
-            user_uuid: bufUUID,
-            time_limit,
-            prob_state: probState,
-            attacked_cnt: 0,
-            depence_cnt: 0,
-            weak_status: 0,
-        })    
+    result = judge.insert({
+        prob_num,
+        code,
+        prog_lang,
+        user_uuid: bufUUID,
+        time_limit,
+        prob_state: probState,
+    })
+
+    problem.judgeResultUpdate(probState, prob_num); // problem 의 submit_cnt, correct_cnt update 로직
     // }else{
         // console.log("&****************^&*%*%^^*%*%^*^&%*^*^&");
         // result = judge.update(bufUUID, {
@@ -119,12 +118,12 @@ exports.judge = async (ctx, next)=>{
         //     date: new Date()
         // }, prob_num)
     // }
-
-     ctx.body = {
-         status:200,
-         totalJudgeDataCnt: fileLen,
-         correctCnt,
-         errMsg: filteredErrMsg
+    
+    ctx.body = {
+        status:200,
+        totalJudgeDataCnt: fileLen,
+        correctCnt,
+        errMsg: filteredErrMsg
     }
 }
 

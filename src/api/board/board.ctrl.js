@@ -4,7 +4,6 @@ const user = require('../../databases/models/user');
 const board = require('../../databases/models/board');
 const Joi = require('joi');
 
-
 exports.create = async (ctx, next) => {
     const body = Joi.object({
         title: Joi.string().required(),
@@ -14,7 +13,7 @@ exports.create = async (ctx, next) => {
     }).validate(ctx.request.body);
     console.log(body.error);
     if(body.error) ctx.throw(400, '잘못된 요청입니다.');
-
+    
     const { title, main_text, prob_num, board_type } = body.value;
 
     // console.log(title, main_text);
@@ -25,8 +24,7 @@ exports.create = async (ctx, next) => {
         board_type,
         user_uuid: Buffer.from(ctx.request.user.UUID, 'hex'),
     })
-
-    // console.log(ctx.request.user);
+    
     ctx.body = {
         status:200,
     }
@@ -58,14 +56,19 @@ exports.showPagenated= async (ctx, next) => {
         orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
         pageNum: Joi.number().required(),
         contentsCnt: Joi.number().required(),
-        boardType: Joi.string().required()
+        // boardType 이 'none' 이면 모든 boardType 이 적용됨
+        // 'none' 을 제외한 수들은 boardType 필터가 적용됨 
+        boardType: Joi.string().required(),
+        // probNum 이  -1 이면 probNum 조회는 없음
+        // -1을 제외한 수들은 probNum 필터가 적용됨
+        probNum: Joi.number().required() 
     }).validate(ctx.query);
 
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
-    const { orderForm, pageNum, contentsCnt, boardType } = query.value;
+    const { orderForm, pageNum, contentsCnt, boardType, probNum } = query.value;
 
-    const nPage = await board.pagenatedBoard(orderForm, pageNum, contentsCnt, boardType);
+    const nPage = await board.pagenatedBoard(orderForm, pageNum, contentsCnt, boardType, probNum);
     const totalContentCnt = await board.totalContentsCnt(boardType);
 
 

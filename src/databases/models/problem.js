@@ -46,3 +46,20 @@ exports.problemFromProbNum = async(probNum) => {
 exports.probCnt = async() => {
     return await db.query(`select count(*) as cnt from problem`)
 }
+
+// judge 를 수행하였을 때 problem 테이블에서 제출횟수(submit_cnt)와 성공횟수(correct_cnt) 업데이트
+exports.judgeResultUpdate = async(judgeState, probNum)=>{ 
+    console.log(judgeState, "@@@@@@@@@@@@");
+    if(judgeState == 1){
+        console.log("judgeStat == 1");
+        return await db.query(
+            `update problem set correct_cnt = correct_cnt + 1, submit_cnt = submit_cnt + 1`
+        )
+    }
+    else if(judgeState == 0){
+        console.log("judgeStat == 0");
+        return await db.query(
+            `update problem set submit_cnt = submit_cnt + 1 where prob_num = ?`, [probNum]
+        )
+    }
+}

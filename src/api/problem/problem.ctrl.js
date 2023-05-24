@@ -100,11 +100,11 @@ async function mvFile(originPath, destPath){
     const destinationFilePath = path.join(destPath, fileName); // 이동할 경로 생성
     
     fs.rename(originPath, destinationFilePath, (err) => {
-      if (err) {
+    if (err) {
         console.error(err);
-      } else {
+    } else {
         console.log('filemv complete.');
-      }
+    }
     });    
 }
 

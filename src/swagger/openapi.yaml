@@ -727,7 +727,16 @@ paths:
       tags:
         - Board 
       summary: 게시판 보여주는 api --> 페이지네이션 포함
-      description: orderForm, pageCnt, contentsCnt
+      description: orderForm , pageCnt, contentsCnt</br>
+                  필터는 총 2가지 -> boardType, probNum -> 즉 나올수 있는 경우의 수는 4가지</br>
+                  boardType == 'none' / probNum == -1</br>
+                  boardType == 'none' / probNum != -1</br>
+                  boardType != 'none' / probNum == -1</br>
+                  boardType != 'none' / probNum != -1</br>
+                  추가설명</br>
+                  boardType 이 none 이라는 것은 모든 종류의 boardType 이 출력됨을 의미</br>
+                  probNum 이 -1 이라는 것은 모든 종류의 probNum 이 출력됨을 의미
+
       parameters:
         - in: query
           name: pageNum
@@ -757,7 +766,14 @@ paths:
           name: boardType
           schema:
             type: string
-          description: 보드 타입 명시
+          description: boardType == 'none' 일 때 boardType 필터 없는 걸로 취급 / boardType != 'none' 일 때는 boardType 필터가 존재하는 걸로 취급
+        - in: query
+          name: probNum
+          schema:
+            type: integer
+          description: probNum == -1 일 때 필터는 probNum 필터 없는 걸로 취급 / probNum != -1 일 때 필터는 probNum 필터가 존재하는 걸로 취급
+          required: true
+
 
 
       responses:

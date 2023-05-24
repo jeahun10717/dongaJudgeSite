@@ -18,17 +18,58 @@ exports.showOne = async (boardID) => {
     return await db.query("SELECT * FROM board where b_id = ?", boardID);
 }
 
-exports.pagenatedBoard = async (orderForm, pageNum, contentsNum, boardType) =>{
-    return await db.query(
-        `
-        select *
-        from board
-        where board_type = ?
-        order by b_id ${orderForm}
-        limit ? offset ?
-        `
-        ,[boardType, contentsNum, pageNum * contentsNum]
-    )
+exports.pagenatedBoard = async (orderForm, pageNum, contentsNum, boardType, probNum) =>{
+    if(boardType == 'none' && probNum == -1){
+        return await db.query(
+            `
+            select board.b_id, board.prob_num, board.title, user.name, board.main_text, board.board_type, board.regist_at
+            from board left join user 
+            on board.user_uuid = user.uuid
+            order by b_id ${orderForm}
+            limit ? offset ?
+            `
+            ,[contentsNum, pageNum * contentsNum]
+        )
+    }
+    if(boardType == 'none' && probNum != -1){
+        return await db.query(
+            `
+            select board.b_id, board.prob_num, board.title, user.name, board.main_text, board.board_type, board.regist_at
+            from board left join user 
+            on board.user_uuid = user.uuid
+            where prob_num = ?
+            order by b_id ${orderForm}
+            limit ? offset ?
+            `
+            ,[probNum, contentsNum, pageNum * contentsNum]
+        )
+    }
+    if(boardType != 'none' && probNum == -1){
+        return await db.query(
+            `
+            select board.b_id, board.prob_num, board.title, user.name, board.main_text, board.board_type, board.regist_at
+            from board left join user 
+            on board.user_uuid = user.uuid
+            where board_type = ?
+            order by b_id ${orderForm}
+            limit ? offset ?
+            `
+            ,[boardType, contentsNum, pageNum * contentsNum]
+        )
+    }
+    if(boardType != 'none' && probNum != -1){
+        return await db.query(
+            `
+            select board.b_id, board.prob_num, board.title, user.name, board.main_text, board.board_type, board.regist_at
+            from board left join user 
+            on board.user_uuid = user.uuid
+            where board_type = ? and prob_num = ?
+            order by b_id ${orderForm}
+            limit ? offset ?
+            `
+            ,[boardType, probNum, contentsNum, pageNum * contentsNum]
+        )
+    }    
 }
 
 exports.totalContentsCnt = async(boardType)=>{

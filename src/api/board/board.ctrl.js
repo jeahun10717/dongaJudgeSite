@@ -12,7 +12,10 @@ exports.create = async (ctx, next) => {
         prob_num: Joi.number()
     }).validate(ctx.request.body);
     // console.log(body.error);
-    if(body.error) ctx.throw(400, '잘못된 요청입니다.');
+    if(body.error) {
+        // console.log(body.error.details[0].message);
+        ctx.throw(400, `잘못된 요청입니다.`);
+    }
     
     const { title, main_text, prob_num, board_type } = body.value;
 
@@ -38,13 +41,6 @@ exports.create = async (ctx, next) => {
         })
     }
 
-    
-    
-    
-
-    // console.log(title, main_text);
-    
-    
     ctx.body = {
         status:200,
     }

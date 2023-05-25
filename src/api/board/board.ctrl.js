@@ -11,19 +11,39 @@ exports.create = async (ctx, next) => {
         board_type: Joi.string().required(),
         prob_num: Joi.number()
     }).validate(ctx.request.body);
-    console.log(body.error);
+    // console.log(body.error);
     if(body.error) ctx.throw(400, '잘못된 요청입니다.');
     
     const { title, main_text, prob_num, board_type } = body.value;
 
+    
+    // 문제번호가 빈 필드로 들어올 때는 -1 을 전달받으므로 아래 로직 작성함
+    if(prob_num == -1) {
+        await board.create({
+            prob_num:null,
+            title,
+            main_text,
+            board_type,
+            user_uuid: Buffer.from(ctx.request.user.UUID, 'hex'),
+        })
+    }else{
+        const probNumState = await board.isExistProb(prob_num);
+        if(probNumState.length == 0) ctx.throw(400, "잘못된 요청입니다(없는 문제 번호 입니다.)") 
+        await board.create({
+            prob_num,
+            title,
+            main_text,
+            board_type,
+            user_uuid: Buffer.from(ctx.request.user.UUID, 'hex'),
+        })
+    }
+
+    
+    
+    
+
     // console.log(title, main_text);
-    await board.create({
-        prob_num,
-        title,
-        main_text,
-        board_type,
-        user_uuid: Buffer.from(ctx.request.user.UUID, 'hex'),
-    })
+    
     
     ctx.body = {
         status:200,
@@ -67,7 +87,7 @@ exports.showPagenated= async (ctx, next) => {
     if(query.error) ctx.throw(400, "잘못된 요청입니다.")
 
     const { orderForm, pageNum, contentsCnt, boardType, probNum } = query.value;
-
+    
     const nPage = await board.pagenatedBoard(orderForm, pageNum, contentsCnt, boardType, probNum);
     const totalContentCnt = await board.totalContentsCnt(boardType);
 

@@ -703,7 +703,8 @@ paths:
               properties:
                 prob_num:
                   type: number
-                  description: community 에 넣을 때는 이 필드 존재 / algorithm 에서는 이 필드 없음
+                  description: community 에 넣을 때는 이 필드 존재 / algorithm 에서는 이 필드 없음</br>
+                              만약 이 필드가 -1 이면 필드에 값을 안보내는 것으로 취급
                 title:
                   type: string
                   description: 게시물 제목

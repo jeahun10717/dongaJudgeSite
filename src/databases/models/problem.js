@@ -30,6 +30,10 @@ exports.pagenatedProb = async (orderForm, pageNum, contentsNum) =>{
     )
 }
 
+exports.isExistProb = async(probNum)=>{
+    return await db.query(`select * from board where prob_num = ?`, probNum);
+}
+
 exports.totalContentsCnt = async()=>{
     const [result] = await db.query(`select count(*) cnt from problem`);
     return result.cnt;

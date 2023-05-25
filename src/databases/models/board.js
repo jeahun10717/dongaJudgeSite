@@ -84,3 +84,7 @@ exports.deleteBoard = async(b_id) => {
 exports.problemFromProbNum = async(probNum) => {
     return await db.query('select * from board where prob_num = ?', probNum);
 }
+
+exports.isExistProb = async(probNum)=>{
+    return await db.query(`select * from board where prob_num = ?`, probNum);
+}

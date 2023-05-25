@@ -3,11 +3,13 @@ const koa = require('koa');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
+const https = require('https');
+const fs = require('fs')
 // const cors = require('cors');
 const xss = require('xss');
 const helmet = require('koa-helmet');
 const multer = require('@koa/multer');
-const mount = require('koa-mount')
+const mount = require('koa-mount');
 const path = require('path');
 const xFrameOptions = require('x-frame-options');
 // const serve = require('koa-static');
@@ -158,6 +160,38 @@ app.use(token.jwtMiddleware);
 app.use(router.routes()).use(router.allowedMethods());
 app.use(require('./swagger'));
 
-app.listen(4000, ()=>{
-   console.log("kakao OAuth test server port: 4000");
+
+
+var config = {
+   domain: 'example.com',
+   http: {
+      port: 8888,
+   },
+   https: {
+      port: 4000,
+      options: {
+         key: fs.readFileSync(path.resolve(process.cwd(), 'certs/key.pem'), 'utf8').toString(),
+         cert: fs.readFileSync(path.resolve(process.cwd(), 'certs/csr.pem'), 'utf8').toString(),
+      },
+   },
+}; 
+
+
+const port = 4000;
+app.listen(port, ()=>{
+   console.log(`kakao OAuth test server port: ${port}`);
 });
+
+
+// const options = {
+//    key: fs.readFileSync('./certs/key.pem'),  // Path to your private key file
+//    cert: fs.readFileSync('./certs/cert.pem'),  // Path to your certificate file
+// };
+
+//  // Create an HTTPS server
+// const server = https.createServer(options, app.callback());
+
+// // Start the server
+// server.listen(443, () => {
+//    console.log('Server running on https://localhost:443');
+// });

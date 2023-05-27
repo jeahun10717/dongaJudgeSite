@@ -31,6 +31,7 @@ exports.create = async (ctx, next) => {
         })
     }else{
         const probNumState = await board.isExistProb(prob_num);
+        console.log(probNumState, "@#$%^");
         if(probNumState.length == 0) ctx.throw(400, "잘못된 요청입니다(없는 문제 번호 입니다.)") 
         await board.create({
             prob_num,

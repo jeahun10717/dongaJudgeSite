@@ -4,6 +4,7 @@ const { user, judge, problem } = require('../../databases');
 const fs = require('fs');
 
 const {c, cpp, node, python, java} = require('compile-run');
+const { log } = require('console');
 
 // const spawn = require('child_process').spawnSync;
 
@@ -51,9 +52,16 @@ exports.judge = async (ctx, next)=>{
         let resultPromise = cpp.runSource(sourcecode, {stdin:inpFileData, timeout:time_limit});
         const compilerResult =
         await resultPromise.then((result) => {
-            // console.log("@@@@@", result);
+            // console.log("--------------------------------");
+            // console.log(outFileData);
             // console.log(result.stdout);
-            if(outFileData == result.stdout) { // 해당 채점 데이터가 정답일 경우
+            // console.log(typeof(outFileData), typeof(result.stdout));
+            // console.log(outFileData.length, result.stdout.length);
+            // console.log("--------------------------------");
+            // let stdOutResult = result.stdout.trimStart();
+            // console.log(stdOutResult, "@#$@#$");
+            if(outFileData.trimEnd() == result.stdout.trimEnd()) { // 해당 채점 데이터가 정답일 경우
+                console.log("-->", outFileData, result.stdout);
                 if("errorType" in result){ // errorType 필드가 존재할 때 
                     errorMsgArr.push(result.errorType);
                 }
@@ -77,6 +85,7 @@ exports.judge = async (ctx, next)=>{
         .catch((err) => {
             console.log(err);
         })
+        console.log(compilerResult);
     }
 
     // console.log(compileResult, "##############################");

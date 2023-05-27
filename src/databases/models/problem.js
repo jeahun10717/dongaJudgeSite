@@ -55,7 +55,9 @@ exports.judgeResultUpdate = async(judgeState, probNum)=>{
     if(judgeState == 1){
         console.log("judgeStat == 1");
         return await db.query(
-            `update problem set correct_cnt = correct_cnt + 1, submit_cnt = submit_cnt + 1`
+            `update problem 
+                set correct_cnt = correct_cnt + 1, submit_cnt = submit_cnt + 1 
+                where prob_num = ?`, [probNum] 
         )
     }
     else if(judgeState == 0){

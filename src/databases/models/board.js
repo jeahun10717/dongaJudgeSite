@@ -86,5 +86,5 @@ exports.problemFromProbNum = async(probNum) => {
 }
 
 exports.isExistProb = async(probNum)=>{
-    return await db.query(`select * from board where prob_num = ?`, probNum);
+    return await db.query(`select * from problem where prob_num = ?`, probNum);
 }

@@ -88,3 +88,9 @@ exports.problemFromProbNum = async(probNum) => {
 exports.isExistProb = async(probNum)=>{
     return await db.query(`select * from problem where prob_num = ?`, probNum);
 }
+
+exports.boardCnt = async() => {
+    return await db.query(
+        `SELECT COUNT(*) as board_cnt FROM board`
+    )
+}

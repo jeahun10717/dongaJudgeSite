@@ -20,6 +20,7 @@ judge.get('/', judgeCtrl.showJudge);
 judge.get('/:judgeUUID', judgeCtrl.showJudgeByUUID);
 judge.post('/', judgeCtrl.judge);
 judge.post('/attack', judgeCtrl.attack);
+judge.get('/mine', judgeCtrl.showJudgeByUUID);
 // judge.post('/', cppUpload.single('test'),judgeCtrl.judge);
 
 module.exports = judge;

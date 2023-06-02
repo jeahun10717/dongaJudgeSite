@@ -409,6 +409,7 @@ paths:
       responses:
         '200':
             $ref: '#/components/responses/200'
+
     post:
       security:
         - BearerAuth: []
@@ -438,7 +439,45 @@ paths:
       responses:
         '200':
             $ref: '#/components/responses/200'
-  /Judge/{judgeUUID}:
+
+  /judge/mine:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Judge
+      summary: 로그인한 당사지의 채점현황을 보여줌
+      description: jwt token 을 이용하여 user_uuid 를 추출하고 그 user_uuid 로 자신의 채점현황 조회
+      parameters:
+        - in: query
+          name: pageNum
+          schema:
+            type: integer
+          description: 페이지 번호
+          required: true
+        - in: query
+          name: orderForm
+          schema:
+            type: string
+            enum:
+              - desc
+              - asc
+              - DESC
+              - ASC
+            default: asc
+          description: 오름차순 내림차순-> asc desc 
+          required: true
+        - in: query
+          name: contentsCnt
+          schema:
+            type: integer
+          description: 한페이지당 보여지는 문제 개수
+          required: true
+
+      responses:
+        '200':
+            $ref: '#/components/responses/200'
+  /judge/{judgeUUID}:
     get:
       security:
         - BearerAuth: []
@@ -663,6 +702,17 @@ paths:
               required:
                 - out
                 - prob_num
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+  /problem/probState:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Problem
+      summary: 게시판 총 개수, 채점 회수, 맞은 회수 출력
+      description: 게시판 총 개수, 채점 회수, 맞은 회수 출력
       responses:
         '200':
           $ref: '#/components/responses/200'

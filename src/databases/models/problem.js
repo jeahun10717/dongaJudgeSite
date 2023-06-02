@@ -67,3 +67,11 @@ exports.judgeResultUpdate = async(judgeState, probNum)=>{
         )
     }
 }
+
+exports.submitCnt = async() => {
+    return await db.query(`SELECT SUM(correct_cnt) as submit_cnt FROM problem`)
+}
+
+exports.correctCnt = async() => {
+    return await db.query(`SELECT SUM(submit_cnt) as correct_cnt FROM problem`)
+}

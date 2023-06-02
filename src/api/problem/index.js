@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-
+problem.get('/probState', problemCtrl.showProbState)
 problem.use(auth.login);
 problem.use(auth.level1); // 일반 로그인 유저가 접근 가능함
 

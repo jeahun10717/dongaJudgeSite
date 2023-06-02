@@ -112,7 +112,7 @@ exports.regist = async(ctx, next) => {
         nick_name, 
         auth:1,
       })
-     
+      
       ctx.body = {
         status: 200,
         result: {

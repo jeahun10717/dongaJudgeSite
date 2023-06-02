@@ -273,20 +273,33 @@ exports.showJudge = async (ctx, next) => {
 }
 
 exports.showJudgeByUUID = async(ctx, next)=>{
-    const param = Joi.object({
-        judgeUUID: Joi.string().required()
-    }).validate(ctx.params);
+    const query = Joi.object({
+        orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
+        pageNum: Joi.number().required(),
+        contentsCnt: Joi.number().required(),
+    }).validate(ctx.query);
 
-    if(param.error) ctx.throw(400, "잘못된 요청입니다");
+    if(query.error) ctx.throw(400, "잘못된 요청입니다");
 
-    const {judgeUUID} = param.value;
+    const {orderForm, pageNum, contentsCnt} = query.value;
+    // const {judgeUUID} = param.value;
 
-    const judgeResult = await judge.showJudgeFromUUID(judgeUUID);
-    console.log(judgeResult);
+    // const judgeResult = await judge.showJudgeFromUUID(judgeUUID);
+    // console.log(judgeResult);
+
+    const { UUID } = ctx.request.user;
+    const bufUUID = Buffer.from(UUID, 'hex');
+    console.log(UUID, bufUUID);
+
+    // const result = await user.isExistFromUUID(bufUUID);
+    
+    const result = await judge.showPagenatedJudgeFromUUID(bufUUID, orderForm, pageNum, contentsCnt)
+
+    if(!result) ctx.throw(401, "인증 오류 입니다.");
 
     ctx.body = {
-        status:200,
-        result: judgeResult
+        status: 200,
+        result
     }
 }
 

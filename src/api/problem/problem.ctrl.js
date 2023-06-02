@@ -3,7 +3,7 @@ const multer = require('@koa/multer');
 const path = require('path')
 const fs = require('fs').promises;
 // const storage = require('../../lib/multer/index')
-const { problem, user } = require('../../databases');
+const { problem, user, board } = require('../../databases');
 const { log } = require('console');
 
 exports.showProblem = async(ctx)=>{
@@ -250,7 +250,6 @@ exports.delProb = async(ctx, next)=>{
     // 위에 path 코드 동기로 안짜도 되는지 확인필요
     
     // console.log(delPath);
-
     const delResult = await problem.deleteProblem(probNum); // db 에서 probnum row 삭제
 
     await fs.rmdir(delPath, {recursive : true}, err => {
@@ -260,5 +259,23 @@ exports.delProb = async(ctx, next)=>{
 
     ctx.body = {
         status: 200
+    }
+}
+
+exports.showProbState = async(ctx, next) => {
+    const submitCnt = await problem.submitCnt();
+    const correctCnt = await problem.correctCnt();
+    const boardCnt = await board.boardCnt();
+
+    const { submit_cnt } = submitCnt[0]
+    const { correct_cnt } = correctCnt[0]
+    const { board_cnt } = boardCnt[0]
+    // console.log(submit_cnt[]);
+    // console.log(correct_cnt);
+    // console.log(board_cnt);
+    ctx.body = {
+        submit_cnt,
+        correct_cnt,
+        board_cnt
     }
 }

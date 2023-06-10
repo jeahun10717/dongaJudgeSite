@@ -46,7 +46,7 @@ exports.problemFromProbNum = async(probNum) => {
 }
 
 exports.probCnt = async() => {
-    return await db.query(`select count(*) as cnt from problem`)
+    return await db.query(`select count(*) as prob_cnt from problem`)
 }
 
 // judge 를 수행하였을 때 problem 테이블에서 제출횟수(submit_cnt)와 성공횟수(correct_cnt) 업데이트

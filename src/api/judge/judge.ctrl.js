@@ -250,56 +250,72 @@ exports.showJudge = async (ctx, next) => {
 
     const { showFlag, probNum, orderForm, pageNum, contentsCnt } = query.value;
 
-    let nPage;
+    let nPage, retCnt;
     if(showFlag == 'all'){
         nPage = await judge.pagenatedJudge(orderForm, pageNum, contentsCnt);
+        retCnt = await judge.pagenatedJudgeCnt(orderForm, pageNum, contentsCnt);
     }else if(showFlag == 'some'){
         nPage = await judge.pagenatedOneProbJudge(probNum, orderForm, pageNum, contentsCnt);
+        retCnt = await judge.pagenatedOneProbJudgeCnt(probNum, orderForm, pageNum, contentsCnt);
     }
     
-
-    
-
-    const totalContentCnt = await judge.totalContentsCnt();
+    // const totalContentCnt = await judge.totalContentsCnt();
 
 
     //TODO: pagination 을 위한 정보 어떤 거 필요한지 알아야 함
     ctx.body = {
         status: 200,
         result: nPage,
-        totalCnt: totalContentCnt
+        totalCnt: retCnt[0].cnt
     }
 
 }
 
-exports.showJudgeByUUID = async(ctx, next)=>{
-    const query = Joi.object({
+exports.showJudgeByUserUUID = async(ctx, next)=>{
+    // TODO: probNum 필터 추가
+        const queryData = Joi.object({
         orderForm: Joi.string().valid('ASC', 'DESC', 'asc', 'desc').default('ASC').required(),
         pageNum: Joi.number().required(),
         contentsCnt: Joi.number().required(),
+        probNum: Joi.number().required()
     }).validate(ctx.query);
 
-    if(query.error) ctx.throw(400, "잘못된 요청입니다");
+    if(queryData.error) ctx.throw(400, "잘못된 요청입니다");
 
-    const {orderForm, pageNum, contentsCnt} = query.value;
-    // const {judgeUUID} = param.value;
-
-    // const judgeResult = await judge.showJudgeFromUUID(judgeUUID);
-    // console.log(judgeResult);
+    const {orderForm, pageNum, contentsCnt, probNum} = queryData.value;
 
     const { UUID } = ctx.request.user;
+    
     const bufUUID = Buffer.from(UUID, 'hex');
     console.log(UUID, bufUUID);
 
-    // const result = await user.isExistFromUUID(bufUUID);
-    
-    const result = await judge.showPagenatedJudgeFromUUID(bufUUID, orderForm, pageNum, contentsCnt)
-
+    const result = await judge.showPagenatedJudgeFromUUID(bufUUID, probNum, orderForm, pageNum, contentsCnt);
+    const retCnt = await judge.showPagenatedJudgeFromUUIDCnt(bufUUID, probNum, orderForm, pageNum, contentsCnt);
+    // console.log(retCnt[0].cnt);
     if(!result) ctx.throw(401, "인증 오류 입니다.");
 
     ctx.body = {
         status: 200,
-        result
+        result,
+        retCnt: retCnt[0].cnt
+    }
+}
+
+exports.showJudgeByJudgeUUID = async(ctx, next)=>{
+    const param = Joi.object({
+        judgeUUID: Joi.string().required()
+    }).validate(ctx.params);
+
+    if(param.error) ctx.throw(400, "잘못된 요청입니다");
+
+    const {judgeUUID} = param.value;
+
+    const judgeResult = await judge.showJudgeFromUUID(judgeUUID);
+    console.log(judgeResult);
+
+    ctx.body = {
+        status:200,
+        result: judgeResult
     }
 }
 

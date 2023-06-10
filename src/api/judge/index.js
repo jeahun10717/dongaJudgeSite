@@ -15,13 +15,11 @@ const {PythonShell} = require('python-shell');
 judge.use(auth.login);
 judge.use(auth.level1);
 
-
+judge.get('/mine', judgeCtrl.showJudgeByUserUUID);
 judge.get('/', judgeCtrl.showJudge);
-judge.get('/:judgeUUID', judgeCtrl.showJudgeByUUID);
+judge.get('/:judgeUUID', judgeCtrl.showJudgeByJudgeUUID);
 judge.post('/', judgeCtrl.judge);
 judge.post('/attack', judgeCtrl.attack);
-judge.get('/mine', judgeCtrl.showJudgeByUUID);
-// judge.post('/', cppUpload.single('test'),judgeCtrl.judge);
 
 module.exports = judge;
 

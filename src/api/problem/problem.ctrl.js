@@ -266,16 +266,19 @@ exports.showProbState = async(ctx, next) => {
     const submitCnt = await problem.submitCnt();
     const correctCnt = await problem.correctCnt();
     const boardCnt = await board.boardCnt();
-
-    const { submit_cnt } = submitCnt[0]
-    const { correct_cnt } = correctCnt[0]
-    const { board_cnt } = boardCnt[0]
+    const probCnt = await problem.probCnt();
+    // console.log("!!!!!!!!!!!!!!!!!!!!!!!!", probCnt);
+    const { submit_cnt } = submitCnt[0];
+    const { correct_cnt } = correctCnt[0];
+    const { board_cnt } = boardCnt[0];
+    const { prob_cnt } = probCnt[0];
     // console.log(submit_cnt[]);
     // console.log(correct_cnt);
     // console.log(board_cnt);
     ctx.body = {
         submit_cnt,
         correct_cnt,
-        board_cnt
+        board_cnt,
+        prob_cnt
     }
 }

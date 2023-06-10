@@ -20,7 +20,7 @@ exports.pagenatedJudge = async (orderForm, pageNum, contentsNum) =>{
     // contentsNum : 한 페이지에 보여줄 컨텐츠 개수
     return await db.query(
         `
-        select j.uuid, u.nick_name, 
+        select j.uuid, u.nick_name, u.name,
         j.prob_num, j.time_limit, j.prog_lang, j.code, j.date
             from judge as j left join user as u
             on j.user_uuid = u.uuid
@@ -37,7 +37,7 @@ exports.pagenatedOneProbJudge = async (probNum, orderForm, pageNum, contentsNum)
     // contentsNum : 한 페이지에 보여줄 컨텐츠 개수
     return await db.query(
         `
-        select j.uuid, u.nick_name, 
+        select j.uuid, u.nick_name, u.name,
         j.prob_num, j.time_limit, j.prog_lang, j.code, j.date
             from judge as j left join user as u
             on j.user_uuid = u.uuid
@@ -46,6 +46,56 @@ exports.pagenatedOneProbJudge = async (probNum, orderForm, pageNum, contentsNum)
             limit ? offset ?;
         `
         ,[probNum, contentsNum, pageNum * contentsNum]
+    )
+}
+
+exports.pagenatedJudgeCnt = async (orderForm) =>{
+    // orderFrom : asc || desc
+    // pageNum : 페이지 번호
+    // contentsNum : 한 페이지에 보여줄 컨텐츠 개수
+    return await db.query(
+        `
+        select 
+            count(*) as cnt
+        from judge as j left join user as u
+        on j.user_uuid = u.uuid
+        order by j.prob_num ${orderForm};
+        `
+    )
+}
+
+exports.pagenatedOneProbJudge = async (probNum, orderForm, pageNum, contentsNum) =>{
+    // orderFrom : asc || desc
+    // pageNum : 페이지 번호
+    // contentsNum : 한 페이지에 보여줄 컨텐츠 개수
+    return await db.query(
+        `
+        select j.uuid, u.nick_name, u.name,
+        j.prob_num, j.time_limit, j.prog_lang, j.code, j.date
+            from judge as j left join user as u
+            on j.user_uuid = u.uuid
+            where j.prob_num = ?
+            order by j.prob_num ${orderForm}
+            limit ? offset ?;
+        `
+        ,[probNum, contentsNum, pageNum * contentsNum]
+    )
+}
+
+exports.pagenatedOneProbJudgeCnt = async (probNum, orderForm) =>{
+    // orderFrom : asc || desc
+    // pageNum : 페이지 번호
+    // contentsNum : 한 페이지에 보여줄 컨텐츠 개수
+    return await db.query(
+        `
+        select 
+            count(*) cnt
+        from judge as j left join user as u
+        on j.user_uuid = u.uuid
+        where j.prob_num = ?
+        order by j.prob_num ${orderForm};
+        `
+        ,[probNum]
     )
 }
 
@@ -58,17 +108,29 @@ exports.showJudgeFromUUID = async(UUID) => {
     return await db.query(`select * from judge where uuid = ?`, UUID);
 }
 
-exports.showPagenatedJudgeFromUUID = async(UUID, orderForm, pageNum, contentsNum) => {
+exports.showPagenatedJudgeFromUUID = async(UUID, probNum, orderForm, pageNum, contentsNum) => {
     return await db.query(
         `
         SELECT 
-            j.uuid, u.nick_name, j.prob_num, 
+            j.uuid, u.nick_name, u.name, j.prob_num, 
             j.time_limit, j.prog_lang, j.code, j.date
         FROM judge AS j LEFT JOIN user AS u ON j.user_uuid = u.uuid
-        WHERE user_uuid = ?
+        WHERE j.user_uuid = ? and j.prob_num = ?
         ORDER BY j.prob_num ${orderForm}
         LIMIT ? OFFSET ?;
-        `, [UUID, contentsNum, pageNum * contentsNum]
+        `, [UUID, probNum, contentsNum, pageNum * contentsNum]
+    )
+}
+
+exports.showPagenatedJudgeFromUUIDCnt = async(UUID, probNum, orderForm) => {
+    return await db.query(
+        `
+        SELECT 
+            COUNT(*) AS cnt
+        FROM judge AS j LEFT JOIN user AS u ON j.user_uuid = u.uuid
+        WHERE j.user_uuid = ? and j.prob_num = ?
+        ORDER BY j.prob_num ${orderForm}
+        `, [UUID, probNum]
     )
 }
 

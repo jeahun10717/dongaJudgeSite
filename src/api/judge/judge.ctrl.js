@@ -293,7 +293,7 @@ exports.showJudgeByUserUUID = async(ctx, next)=>{
     const retCnt = await judge.showPagenatedJudgeFromUUIDCnt(bufUUID, probNum, orderForm, pageNum, contentsCnt);
     // console.log(retCnt[0].cnt);
     if(!result) ctx.throw(401, "인증 오류 입니다.");
-
+    
     ctx.body = {
         status: 200,
         result,

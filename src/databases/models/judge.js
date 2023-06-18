@@ -71,7 +71,7 @@ exports.pagenatedOneProbJudge = async (probNum, orderForm, pageNum, contentsNum)
     return await db.query(
         `
         select j.uuid, u.nick_name, u.name,
-        j.prob_num, j.time_limit, j.prog_lang, j.code, j.date
+        j.prob_num, j.time_limit, j.prog_lang, j.code, j.date, j.prob_state
             from judge as j left join user as u
             on j.user_uuid = u.uuid
             where j.prob_num = ?
@@ -113,7 +113,7 @@ exports.showPagenatedJudgeFromUUID = async(UUID, probNum, orderForm, pageNum, co
         `
         SELECT 
             j.uuid, u.nick_name, u.name, j.prob_num, 
-            j.time_limit, j.prog_lang, j.code, j.date
+            j.time_limit, j.prog_lang, j.code, j.date, j.prob_state
         FROM judge AS j LEFT JOIN user AS u ON j.user_uuid = u.uuid
         WHERE j.user_uuid = ? and j.prob_num = ?
         ORDER BY j.prob_num ${orderForm}
